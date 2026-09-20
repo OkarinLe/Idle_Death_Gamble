@@ -24,3 +24,20 @@ export function buyCost(
     side === "yes" ? lmsrCost(qy + shares, qn, lb) : lmsrCost(qy, qn + shares, lb);
   return after - lmsrCost(qy, qn, lb);
 }
+
+// What selling `shares` of one side would pay right now (mirror of buyCost).
+// Must match sell_shares in supabase/functions.sql.
+export function sellProceeds(
+  qYes: number,
+  qNo: number,
+  b: number,
+  side: "yes" | "no",
+  shares: number
+) {
+  const qy = Number(qYes);
+  const qn = Number(qNo);
+  const lb = Number(b);
+  const after =
+    side === "yes" ? lmsrCost(qy - shares, qn, lb) : lmsrCost(qy, qn - shares, lb);
+  return lmsrCost(qy, qn, lb) - after;
+}
