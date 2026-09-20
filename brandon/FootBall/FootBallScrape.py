@@ -30,7 +30,16 @@ SETUP
 USAGE
 -----
     python vt_football_schedule_scraper.py
+        -> runs forever, re-scraping every 5 minutes (the default)
+
     python vt_football_schedule_scraper.py --season 2025 --output vt_2025.csv
+        -> same, but for the 2025 season and a custom output file
+
+    python vt_football_schedule_scraper.py --interval 10
+        -> loop every 10 minutes instead of the default 5
+
+    python vt_football_schedule_scraper.py --once
+        -> run a single time and exit (no looping)
 
 Add --headed if you want to watch the browser work (useful for debugging).
 """
@@ -47,6 +56,8 @@ from bs4 import BeautifulSoup
 
 BASE_URL = "https://hokiesports.com/sports/football/schedule"
 FIELDNAMES = ["Date", "Teams", "Location", "Time/Results", "Links"]
+
+DEFAULT_INTERVAL_MINUTES = 5
 
 
 def fetch_rendered_html(url: str, headless: bool = True, timeout_ms: int = 30000) -> str:
@@ -215,9 +226,14 @@ def main():
     parser.add_argument(
         "--interval",
         type=float,
-        default=None,
-        help="Re-run every INTERVAL minutes forever (e.g. --interval 5). "
-        "Omit this to just run once and exit.",
+        default=DEFAULT_INTERVAL_MINUTES,
+        help=f"Re-run every INTERVAL minutes forever (default: {DEFAULT_INTERVAL_MINUTES}). "
+        "Pass --once to run a single time instead.",
+    )
+    parser.add_argument(
+        "--once",
+        action="store_true",
+        help="Run a single time and exit, ignoring --interval.",
     )
     args = parser.parse_args()
 
@@ -245,7 +261,7 @@ def main():
 
         print(f"  Wrote {len(rows)} games to {args.output}")
 
-    if args.interval is None:
+    if args.once or args.interval <= 0:
         run_once()
     else:
         print(f"Running every {args.interval} minute(s). Press Ctrl+C to stop.")

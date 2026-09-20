@@ -14,6 +14,12 @@ elements (which don't expose text/DOM you can parse), this script:
   4. Falls back to reading the rendered DOM (card titles + any visible
      numbers/tooltips) if no JSON API call is found.
 
+This version runs that whole process on a repeating schedule (every
+RUN_INTERVAL_SECONDS, default 5 minutes) so you get a fresh snapshot
+without having to re-invoke the script by hand. Each run overwrites
+OUTPUT_PATH; set APPEND_HISTORY = True below if you'd rather keep every
+snapshot in a running JSON-lines log instead.
+
 Setup
 -----
     pip install playwright --break-system-packages
@@ -22,6 +28,11 @@ Setup
 Usage
 -----
     python scrape_facility_occupancy.py
+
+    Runs once immediately, then repeats every RUN_INTERVAL_SECONDS until
+    you stop it with Ctrl+C. Pass --once to run a single time and exit
+    (useful for testing or if you want to drive the schedule with cron /
+    a task scheduler instead of this script's built-in loop).
 
 Notes
 -----
@@ -34,14 +45,20 @@ Notes
   skip Playwright entirely and just hit that endpoint with `requests`,
   which will be far faster and more robust than browser automation.
 - Please check the site's Terms of Service / robots.txt and use reasonable
-  request rates. This script is intended for personal/informational use
-  (e.g., checking current gym crowding), not high-frequency polling.
+  request rates. Polling every 5 minutes is intended as a reasonable
+  default for personal/informational use (e.g., checking current gym
+  crowding); please don't dial this down much further without checking
+  the site's terms first.
 """
 
+import argparse
 import json
 import re
+import sys
 import time
+import traceback
 from dataclasses import asdict, dataclass, field
+from datetime import datetime
 from typing import Optional
 
 from playwright.sync_api import sync_playwright
@@ -50,6 +67,10 @@ URL = "https://connect.recsports.vt.edu/facilityoccupancy"
 HEADLESS = True          # set False the first time to watch it work / debug
 WAIT_AFTER_LOAD_MS = 4000  # give charts time to fetch + render
 OUTPUT_PATH = "facility_occupancy.json"
+HISTORY_PATH = "facility_occupancy_history.jsonl"
+
+RUN_INTERVAL_SECONDS = 5 * 60  # 5 minutes
+APPEND_HISTORY = False         # True: also append each snapshot to HISTORY_PATH
 
 # Keywords that suggest a network response is occupancy-related JSON
 CANDIDATE_KEYWORDS = ("occup", "capacity", "facility", "count", "attend")
@@ -184,16 +205,22 @@ def scrape_via_dom_fallback() -> list[FacilityReading]:
 def write_json(payload: dict) -> None:
     with open(OUTPUT_PATH, "w") as f:
         json.dump(payload, f, indent=2)
-    print(f"\nWrote results to {OUTPUT_PATH}")
+    print(f"Wrote results to {OUTPUT_PATH}")
+
+    if APPEND_HISTORY:
+        with open(HISTORY_PATH, "a") as f:
+            f.write(json.dumps(payload) + "\n")
+        print(f"Appended snapshot to {HISTORY_PATH}")
 
 
-def main():
-    print(f"Loading {URL} ...")
+def run_once() -> None:
+    """Do a single scrape-and-write pass."""
+    print(f"[{datetime.now().isoformat(timespec='seconds')}] Loading {URL} ...")
     api_hits = scrape_via_network_capture()
     timestamp = time.strftime("%Y-%m-%dT%H:%M:%S")
 
     if api_hits:
-        print(f"\nFound {len(api_hits)} JSON response(s) that look occupancy-related.")
+        print(f"Found {len(api_hits)} JSON response(s) that look occupancy-related.")
         print(
             "Raw API responses saved to the JSON file below under 'raw_api_hits'. "
             "Inspect them, then adjust this script to pull the exact raw-count "
@@ -208,7 +235,7 @@ def main():
         return
 
     print("No obvious occupancy JSON API found via network capture.")
-    print("Falling back to DOM scraping (best-effort)...\n")
+    print("Falling back to DOM scraping (best-effort)...")
 
     readings = scrape_via_dom_fallback()
     facilities = [
@@ -229,6 +256,46 @@ def main():
         "source": URL,
         "facilities": facilities,
     })
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Scrape VT RecSports facility occupancy.")
+    parser.add_argument(
+        "--once",
+        action="store_true",
+        help="Run a single scrape and exit, instead of looping every "
+             f"{RUN_INTERVAL_SECONDS} seconds.",
+    )
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=RUN_INTERVAL_SECONDS,
+        help="Seconds between runs when looping (default: %(default)s).",
+    )
+    args = parser.parse_args()
+
+    if args.once:
+        run_once()
+        return
+
+    print(f"Starting scheduled scraper: every {args.interval} seconds. Press Ctrl+C to stop.")
+    try:
+        while True:
+            start = time.monotonic()
+            try:
+                run_once()
+            except Exception:
+                # Don't let one failed run kill the whole schedule -- log
+                # the traceback and try again on the next interval.
+                print("Run failed with an exception:", file=sys.stderr)
+                traceback.print_exc()
+
+            elapsed = time.monotonic() - start
+            sleep_for = max(0, args.interval - elapsed)
+            print(f"Sleeping {sleep_for:.0f}s until next run...\n")
+            time.sleep(sleep_for)
+    except KeyboardInterrupt:
+        print("\nStopped by user.")
 
 
 if __name__ == "__main__":
