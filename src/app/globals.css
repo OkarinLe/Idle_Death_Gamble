@@ -56,6 +56,20 @@ body {
   animation: fade-in 0.3s ease-out both;
 }
 
+/* Halloween joke button: a skeleton sprints across the screen, left edge to right edge. */
+@keyframes skeleton-run {
+  from {
+    left: -10vw;
+  }
+  to {
+    left: 110vw;
+  }
+}
+
+.animate-skeleton-run {
+  animation: skeleton-run 2.5s linear;
+}
+
 /* ---------- Accessibility ---------- */
 
 /* Keyboard focus: a dark inner ring plus an orange outer ring, visible on light AND dark backgrounds. */

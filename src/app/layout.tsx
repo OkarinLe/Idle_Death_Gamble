@@ -4,6 +4,7 @@ import "./globals.css";
 import { LangProvider } from "@/lib/i18n";
 import { TradingModeProvider } from "@/lib/tradingMode";
 import AccessibilityBar from "@/components/AccessibilityBar";
+import HalloweenButton from "@/components/HalloweenButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <TradingModeProvider>
             <AccessibilityBar />
             {children}
+            <HalloweenButton />
           </TradingModeProvider>
         </LangProvider>
       </body>
