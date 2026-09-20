@@ -1,13 +1,40 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { yesPrice, buyCost } from "@/lib/lmsr";
+import PriceChart, { type ChartPoint } from "@/components/PriceChart";
 import type { Place, Reading, Market } from "@/lib/types";
 
 type Profile = { display_name: string; balance: number };
 type Pick = { marketId: string; side: "yes" | "no" };
+
+// Football card. Shows the game in progress, or else the next one. Past games are never shown.
+// The data comes from scripts/football-agent.mjs (saved on the place's meta).
+function GameCard({ place }: { place: Place }) {
+  const live = place.meta?.live;
+  const game = live ?? place.meta?.upcoming?.[0];
+  if (!game) return <p className="mt-3 text-sm opacity-70">No live or upcoming game right now.</p>;
+
+  const when = new Date(game.kickoff).toLocaleString([], {
+    weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York",
+  });
+  return (
+    <div className="mt-3 text-sm">
+      <p className="font-semibold">
+        {live ? "LIVE now: " : "Next game: "}Virginia Tech {game.home ? "vs." : "at"} {game.opponent}
+      </p>
+      <p className="mt-1 text-xs opacity-70">
+        {live
+          ? "In progress. The final score shows up when the game ends."
+          : game.time_tbd ? "Start time to be announced" : `${when} ET`}
+        {" · Official schedule, hokiesports.com"}
+      </p>
+    </div>
+  );
+}
 
 export default function Home() {
   const router = useRouter();
@@ -23,6 +50,24 @@ export default function Home() {
   const [picked, setPicked] = useState<Pick | null>(null);
   const [shares, setShares] = useState(10);
   const [busy, setBusy] = useState(false);
+  // Yes-price history for each open market, used by the live chart.
+  const [history, setHistory] = useState<Record<string, ChartPoint[]>>({});
+
+  // Every trade saves a price point. Each chart starts at 50 cents when the market was created.
+  async function loadHistory(open: Market[]) {
+    if (open.length === 0) return setHistory({});
+    const { data } = await supabase
+      .from("market_price_history")
+      .select("market_id, yes_price, created_at")
+      .in("market_id", open.map((m) => m.id))
+      .order("created_at", { ascending: true });
+    const byMarket: Record<string, ChartPoint[]> = {};
+    for (const m of open) byMarket[m.id] = [{ t: new Date(m.created_at).getTime(), y: 0.5 }];
+    for (const row of data ?? []) {
+      byMarket[row.market_id]?.push({ t: new Date(row.created_at).getTime(), y: Number(row.yes_price) });
+    }
+    setHistory(byMarket);
+  }
 
   async function loadData() {
     const [p, r, m] = await Promise.all([
@@ -32,7 +77,9 @@ export default function Home() {
     ]);
     setPlaces((p.data as Place[]) ?? []);
     setLatest((r.data as Reading[]) ?? []);
-    setMarkets((m.data as Market[]) ?? []);
+    const openMarkets = (m.data as Market[]) ?? [];
+    setMarkets(openMarkets);
+    await loadHistory(openMarkets);
 
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
@@ -49,9 +96,18 @@ export default function Home() {
   }
 
   useEffect(() => {
+    // Loading data when the page opens is the whole point of this effect.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!trading) return;
+    const timer = setInterval(() => loadData(), 15_000);
+    return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trading]);
 
   function toggleTrading() {
     setTrading(!trading);
@@ -113,7 +169,9 @@ export default function Home() {
           Idle Death Gamble
         </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href="/leaderboard" className="text-sm underline">Leaderboard</Link>
+          {profile && <Link href="/portfolio" className="text-sm underline">Portfolio</Link>}
           {profile && (
             <>
               <span className="rounded-full px-3 py-1 text-sm font-semibold" style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}>
@@ -172,6 +230,7 @@ export default function Home() {
         {places.map((place) => {
           const occ = reading(place.id, "occupancy_pct");
           const wait = reading(place.id, "wait_minutes");
+          const people = reading(place.id, "occupancy_count"); // head count (gyms)
           const placeMarkets = markets.filter((m) => m.place_id === place.id);
 
           return (
@@ -188,12 +247,20 @@ export default function Home() {
                 <span className="text-xs uppercase tracking-wide opacity-70">{place.category}</span>
               </div>
 
-              {occ ? (
+              {place.category === "sports" ? (
+                <GameCard place={place} />
+              ) : occ ? (
                 <div className="mt-3">
                   <div className="flex justify-between text-sm">
                     <span>Occupancy</span>
                     <span className="font-semibold">{Math.round(occ.value)}% full</span>
                   </div>
+                  {people && (
+                    <p className="text-sm">
+                      About <span className="font-semibold">{Math.round(people.value)}</span> people
+                      {place.capacity ? ` of ${place.capacity}` : ""}
+                    </p>
+                  )}
                   <div
                     role="progressbar"
                     aria-label={`${place.name} occupancy`}
@@ -238,6 +305,7 @@ export default function Home() {
                           {m.ticker} · Volume {Number(m.volume).toFixed(0)}
                           {m.closes_at && ` · Closes ${new Date(m.closes_at).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`}
                         </p>
+                        <PriceChart points={history[m.id] ?? []} />
                         <div className="mt-2 grid grid-cols-2 gap-2">
                           <button
                             onClick={() => handlePick(m.id, "yes")}
@@ -268,7 +336,7 @@ export default function Home() {
                         {isPicked && (
                           <div className="mt-3 rounded border border-gray-600 p-3">
                             <label htmlFor={`shares-${m.id}`} className="text-sm font-medium">
-                              Shares of {picked.side.toUpperCase()} (each pays 1 Hokie Buck if you're right)
+                              Shares of {picked.side.toUpperCase()} (each pays 1 Hokie Buck if you&apos;re right)
                             </label>
                             <input
                               id={`shares-${m.id}`}
