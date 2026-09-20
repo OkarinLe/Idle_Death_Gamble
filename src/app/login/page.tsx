@@ -43,7 +43,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main id="main" className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 p-6">
+    <main id="main" className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 p-6 animate-fade-up">
       <BackLink href="/" label={t("nav.back")} />
 
       <h1 className="text-2xl font-bold" style={{ color: "#861F41" }}>
@@ -79,14 +79,20 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded p-2 font-semibold text-white disabled:opacity-50"
+          className="rounded p-2 font-semibold text-white transition-transform duration-150 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
           style={{ backgroundColor: "#861F41" }}
         >
           {loading ? t("login.wait") : mode === "signin" ? t("login.signIn") : t("login.signUp")}
         </button>
       </form>
 
-      <p role="alert" aria-live="polite" className="min-h-6 text-sm" style={{ color: "#B00020" }}>
+      <p
+        key={message}
+        role="alert"
+        aria-live="polite"
+        className={"min-h-6 text-sm" + (message ? " animate-fade-in" : "")}
+        style={{ color: "#B00020" }}
+      >
         {message}
       </p>
 

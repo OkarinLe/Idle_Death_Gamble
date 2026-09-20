@@ -149,7 +149,13 @@ export default function PortfolioPage() {
       </header>
 
       <main id="main" className="mx-auto max-w-3xl space-y-4 p-4">
-        <p role="status" aria-live="polite" className="min-h-6 text-sm font-medium" style={{ color: "#E5751F" }}>
+        <p
+          key={note}
+          role="status"
+          aria-live="polite"
+          className={"min-h-6 text-sm font-medium" + (note ? " animate-fade-in" : "")}
+          style={{ color: "#E5751F" }}
+        >
           {note}
         </p>
 
@@ -169,8 +175,12 @@ export default function PortfolioPage() {
                 ["Balance", balance],
                 ["Open positions worth", positionsValue],
                 ["Net worth", balance + positionsValue],
-              ].map(([label, value]) => (
-                <div key={label as string} className="rounded-lg border border-gray-700 bg-gray-900 p-3">
+              ].map(([label, value], i) => (
+                <div
+                  key={label as string}
+                  className="animate-fade-up rounded-lg border border-gray-700 bg-gray-900 p-3"
+                  style={{ animationDelay: `${i * 60}ms` }}
+                >
                   <dt className="text-xs uppercase tracking-wide text-gray-300">{label as string}</dt>
                   <dd className="text-xl font-semibold">{money(value as number)} Hokie Bucks</dd>
                 </div>
@@ -185,8 +195,12 @@ export default function PortfolioPage() {
               </p>
             )}
 
-            {openRows.map(({ p, m }) => (
-              <section key={m.id} className="rounded-lg border border-gray-700 bg-gray-900 p-4">
+            {openRows.map(({ p, m }, i) => (
+              <section
+                key={m.id}
+                className="animate-fade-up rounded-lg border border-gray-700 bg-gray-900 p-4"
+                style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
+              >
                 <h3 className="font-medium">{m.question}</h3>
                 <p className="text-xs text-gray-300">{m.ticker}</p>
 
@@ -212,14 +226,14 @@ export default function PortfolioPage() {
                             onClick={() => pickSell(m.id, side, have)}
                             aria-label={`Sell ${side.toUpperCase()} shares in ${m.ticker}`}
                             aria-expanded={isPicked}
-                            className="rounded border border-gray-400 px-3 py-1 font-semibold"
+                            className="rounded border border-gray-400 px-3 py-1 font-semibold transition-transform duration-150 hover:scale-105 active:scale-95"
                           >
                             Sell
                           </button>
                         </div>
 
                         {isPicked && (
-                          <div className="mt-3 rounded border border-gray-600 p-3">
+                          <div className="mt-3 animate-fade-up rounded border border-gray-600 p-3">
                             <label htmlFor={inputId} className="text-sm font-medium">
                               Shares of {side.toUpperCase()} to sell (you own {have})
                             </label>
@@ -242,12 +256,15 @@ export default function PortfolioPage() {
                               <button
                                 onClick={confirmSell}
                                 disabled={busy}
-                                className="rounded px-3 py-1 font-semibold disabled:opacity-50"
+                                className="rounded px-3 py-1 font-semibold transition-transform duration-150 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                                 style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}
                               >
                                 {busy ? "Selling..." : "Confirm sell"}
                               </button>
-                              <button onClick={() => setPicked(null)} className="rounded border border-gray-500 px-3 py-1">
+                              <button
+                                onClick={() => setPicked(null)}
+                                className="rounded border border-gray-500 px-3 py-1 transition-transform duration-150 hover:scale-105 active:scale-95"
+                              >
                                 Cancel
                               </button>
                             </div>

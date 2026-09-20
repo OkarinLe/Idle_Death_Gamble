@@ -21,6 +21,41 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+/* ---------- Animation helpers ----------
+   Small, reusable entrance animations. Anything using these classes is
+   automatically turned off by the prefers-reduced-motion rule below,
+   because that rule kills all transitions and animations on the page. */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* "both" keeps the element invisible before its delay starts, and holds the
+   end state after the animation finishes, so nothing pops back. */
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out both;
+}
+
 /* ---------- Accessibility ---------- */
 
 /* Keyboard focus: a dark inner ring plus an orange outer ring, visible on light AND dark backgrounds. */

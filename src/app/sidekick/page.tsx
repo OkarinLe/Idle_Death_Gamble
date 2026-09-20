@@ -115,7 +115,7 @@ export default function SideKickPage() {
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded p-3 font-semibold text-white disabled:opacity-60"
+          className="w-full rounded p-3 font-semibold text-white transition-transform duration-150 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:hover:scale-100"
           style={{ backgroundColor: "#861F41" }}
         >
           {busy ? t("sk.making") : t("sk.make")}
@@ -123,12 +123,22 @@ export default function SideKickPage() {
       </form>
 
       {/* Errors and copy notices. aria-live makes screen readers announce changes. */}
-      <p role="status" aria-live="polite" className="min-h-6 text-sm font-medium" style={{ color: "#8A3B00" }}>
+      <p
+        key={busy ? "busy" : message}
+        role="status"
+        aria-live="polite"
+        className={"min-h-6 text-sm font-medium" + (message || busy ? " animate-fade-in" : "")}
+        style={{ color: "#8A3B00" }}
+      >
         {busy ? t("sk.making") : message}
       </p>
 
       {idea && (
-        <section aria-labelledby="result-title" className="space-y-3 rounded-lg border-2 p-5" style={{ borderColor: "#861F41" }}>
+        <section
+          aria-labelledby="result-title"
+          className="animate-fade-up space-y-3 rounded-lg border-2 p-5"
+          style={{ borderColor: "#861F41" }}
+        >
           <h2 id="result-title" ref={resultRef} tabIndex={-1} className="text-xl font-bold">
             {idea.question}
           </h2>
@@ -141,15 +151,27 @@ export default function SideKickPage() {
           <p><span className="font-semibold">{t("sk.why")}</span> {idea.reason}</p>
 
           <div className="flex flex-wrap gap-2">
-            <button onClick={copy} className="rounded border-2 px-3 py-2 font-semibold" style={{ borderColor: "#861F41", color: "#861F41" }}>
+            <button
+              onClick={copy}
+              className="rounded border-2 px-3 py-2 font-semibold transition-transform duration-150 hover:scale-105 active:scale-95"
+              style={{ borderColor: "#861F41", color: "#861F41" }}
+            >
               {t("sk.copy")}
             </button>
             {typeof navigator !== "undefined" && "share" in navigator && (
-              <button onClick={share} className="rounded border-2 px-3 py-2 font-semibold" style={{ borderColor: "#861F41", color: "#861F41" }}>
+              <button
+                onClick={share}
+                className="rounded border-2 px-3 py-2 font-semibold transition-transform duration-150 hover:scale-105 active:scale-95"
+                style={{ borderColor: "#861F41", color: "#861F41" }}
+              >
                 {t("sk.share")}
               </button>
             )}
-            <Link href="/" className="rounded px-3 py-2 font-semibold" style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}>
+            <Link
+              href="/"
+              className="rounded px-3 py-2 font-semibold transition-transform duration-150 hover:scale-105 active:scale-95"
+              style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}
+            >
               {t("sk.trade")}
             </Link>
           </div>

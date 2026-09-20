@@ -167,46 +167,56 @@ export default function Home() {
   const dark = trading;
 
   return (
-    <div className={dark ? "min-h-screen bg-gray-950 text-gray-100" : "min-h-screen bg-white text-gray-900"}>
-      <header className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 p-4">
-        <h1 className="text-2xl font-bold" style={{ color: dark ? "#E5751F" : "#861F41" }}>
-          Idle Death Gamble
-        </h1>
+    <div className={(dark ? "min-h-screen bg-gray-950 text-gray-100" : "min-h-screen bg-white text-gray-900") + " transition-colors duration-300"}>
+      {/* The top bar gets its own background so it reads as a distinct band. It goes
+          near-black in Trading mode (darker than the gray-950 page behind it) to set the
+          "you're trading now" tone apart from the everyday campus-info look. */}
+      <header
+        className={
+          "border-b transition-colors duration-300 " +
+          (dark ? "border-gray-800 bg-black" : "border-gray-200 bg-white")
+        }
+      >
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 p-4">
+          <h1 className="text-2xl font-bold transition-colors duration-300" style={{ color: dark ? "#E5751F" : "#861F41" }}>
+            Idle Death Gamble
+          </h1>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <Link href="/leaderboard" className="text-sm underline">{t("nav.leaderboard")}</Link>
-          {profile && <Link href="/portfolio" className="text-sm underline">{t("nav.portfolio")}</Link>}
-          {profile && (
-            <>
-              <span className="rounded-full px-3 py-1 text-sm font-semibold" style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}>
-                {Number(profile.balance).toFixed(2)} Hokie Bucks
-              </span>
-              <button onClick={signOut} className="text-sm underline">{t("nav.signOut")}</button>
-            </>
-          )}
-          {!profile && !loading && (
-            <a href="/login" className="text-sm underline">{t("nav.signIn")}</a>
-          )}
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/leaderboard" className="text-sm underline">{t("nav.leaderboard")}</Link>
+            {profile && <Link href="/portfolio" className="text-sm underline">{t("nav.portfolio")}</Link>}
+            {profile && (
+              <>
+                <span className="rounded-full px-3 py-1 text-sm font-semibold" style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}>
+                  {Number(profile.balance).toFixed(2)} Hokie Bucks
+                </span>
+                <button onClick={signOut} className="text-sm underline">{t("nav.signOut")}</button>
+              </>
+            )}
+            {!profile && !loading && (
+              <a href="/login" className="text-sm underline">{t("nav.signIn")}</a>
+            )}
 
-          <button
-            role="switch"
-            aria-checked={trading}
-            onClick={toggleTrading}
-            className="flex items-center gap-2 rounded-full border-2 px-3 py-1 text-sm font-semibold"
-            style={{ borderColor: dark ? "#E5751F" : "#861F41" }}
-          >
-            <span
-              aria-hidden="true"
-              className="inline-block h-4 w-8 rounded-full p-0.5"
-              style={{ backgroundColor: trading ? "#E5751F" : "#4b5563" }}
+            <button
+              role="switch"
+              aria-checked={trading}
+              onClick={toggleTrading}
+              className="flex items-center gap-2 rounded-full border-2 px-3 py-1 text-sm font-semibold"
+              style={{ borderColor: dark ? "#E5751F" : "#861F41" }}
             >
               <span
-                className="block h-3 w-3 rounded-full bg-white transition-transform"
-                style={{ transform: trading ? "translateX(16px)" : "translateX(0)" }}
-              />
-            </span>
-            {t("trading.label", { state: trading ? t("on") : t("off") })}
-          </button>
+                aria-hidden="true"
+                className="inline-block h-4 w-8 rounded-full p-0.5 transition-colors duration-300"
+                style={{ backgroundColor: trading ? "#E5751F" : "#4b5563" }}
+              >
+                <span
+                  className="block h-3 w-3 rounded-full bg-white transition-transform duration-300"
+                  style={{ transform: trading ? "translateX(16px)" : "translateX(0)" }}
+                />
+              </span>
+              {t("trading.label", { state: trading ? t("on") : t("off") })}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -225,13 +235,19 @@ export default function Home() {
           </p>
         )}
 
-        <p role="status" aria-live="polite" className="min-h-6 text-sm font-medium" style={{ color: dark ? "#E5751F" : "#B34700" }}>
+        <p
+          key={note}
+          role="status"
+          aria-live="polite"
+          className={"min-h-6 text-sm font-medium" + (note ? " animate-fade-in" : "")}
+          style={{ color: dark ? "#E5751F" : "#B34700" }}
+        >
           {note}
         </p>
 
         {loading && <p>{t("loading")}</p>}
 
-        {places.map((place) => {
+        {places.map((place, i) => {
           const occ = reading(place.id, "occupancy_pct");
           const wait = reading(place.id, "wait_minutes");
           const people = reading(place.id, "occupancy_count"); // head count (gyms)
@@ -241,10 +257,14 @@ export default function Home() {
             <section
               key={place.id}
               className={
-                dark
+                (dark
                   ? "rounded-lg border border-gray-700 bg-gray-900 p-4"
-                  : "rounded-lg border border-gray-300 bg-white p-4 shadow-sm"
+                  : "rounded-lg border border-gray-300 bg-white p-4 shadow-sm") +
+                " animate-fade-up transition-colors duration-300"
               }
+              // Each card starts slightly after the one before it, so the list settles in
+              // top to bottom instead of all at once.
+              style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
             >
               <div className="flex items-baseline justify-between gap-2">
                 <h2 className="text-lg font-semibold">{place.name}</h2>
@@ -274,7 +294,10 @@ export default function Home() {
                     aria-valuemax={100}
                     className="mt-1 h-3 w-full overflow-hidden rounded bg-gray-300"
                   >
-                    <div className="h-full" style={{ width: `${Math.min(100, occ.value)}%`, backgroundColor: "#861F41" }} />
+                    <div
+                      className="h-full transition-[width] duration-700 ease-out"
+                      style={{ width: `${Math.min(100, occ.value)}%`, backgroundColor: "#861F41" }}
+                    />
                   </div>
                 </div>
               ) : (
@@ -316,7 +339,7 @@ export default function Home() {
                             onClick={() => handlePick(m.id, "yes")}
                             aria-label={t("buyYes", { n: yes })}
                             aria-pressed={isPicked && picked.side === "yes"}
-                            className="rounded p-2 font-semibold text-white"
+                            className="rounded p-2 font-semibold text-white transition-transform duration-150 hover:scale-105 active:scale-95"
                             style={{
                               backgroundColor: "#0B6E99",
                               outline: isPicked && picked.side === "yes" ? "3px solid #fff" : "none",
@@ -328,7 +351,7 @@ export default function Home() {
                             onClick={() => handlePick(m.id, "no")}
                             aria-label={t("buyNo", { n: no })}
                             aria-pressed={isPicked && picked.side === "no"}
-                            className="rounded p-2 font-semibold text-white"
+                            className="rounded p-2 font-semibold text-white transition-transform duration-150 hover:scale-105 active:scale-95"
                             style={{
                               backgroundColor: "#B34700",
                               outline: isPicked && picked.side === "no" ? "3px solid #fff" : "none",
@@ -339,7 +362,7 @@ export default function Home() {
                         </div>
 
                         {isPicked && (
-                          <div className="mt-3 rounded border border-gray-600 p-3">
+                          <div className="mt-3 animate-fade-up rounded border border-gray-600 p-3">
                             <label htmlFor={`shares-${m.id}`} className="text-sm font-medium">
                               {t("shares", { side: t(picked.side).toUpperCase() })}
                             </label>
@@ -362,12 +385,15 @@ export default function Home() {
                               <button
                                 onClick={confirmBuy}
                                 disabled={busy}
-                                className="rounded px-3 py-1 font-semibold disabled:opacity-50"
+                                className="rounded px-3 py-1 font-semibold transition-transform duration-150 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                                 style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}
                               >
                                 {busy ? t("buying") : t("confirmBuy")}
                               </button>
-                              <button onClick={() => setPicked(null)} className="rounded border border-gray-500 px-3 py-1">
+                              <button
+                                onClick={() => setPicked(null)}
+                                className="rounded border border-gray-500 px-3 py-1 transition-transform duration-150 hover:scale-105 active:scale-95"
+                              >
                                 {t("cancel")}
                               </button>
                             </div>

@@ -102,7 +102,7 @@ export default function AnsDemoPage() {
                   key={s.id}
                   onClick={() => run(s.id)}
                   disabled={busy}
-                  className="rounded px-3 py-2 font-semibold text-white disabled:opacity-50"
+                  className="rounded px-3 py-2 font-semibold text-white transition-transform duration-150 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                   style={{ backgroundColor: s.id === "real" ? "#861F41" : "#7a3300" }}
                 >
                   {s.label}
@@ -116,7 +116,10 @@ export default function AnsDemoPage() {
             {busy && <p>Checking identity...</p>}
             {error && <p className="font-semibold" style={{ color: "#A4001F" }}>{error}</p>}
             {result && (
-              <section className="space-y-3 rounded-lg border-2 p-4" style={{ borderColor: result.verification.verified ? "#0F6B3A" : "#A4001F" }}>
+              <section
+                className="animate-fade-up space-y-3 rounded-lg border-2 p-4"
+                style={{ borderColor: result.verification.verified ? "#0F6B3A" : "#A4001F" }}
+              >
                 <h2 className="text-xl font-bold" style={{ color: result.verification.verified ? "#0F6B3A" : "#A4001F" }}>
                   {result.verification.verified ? "✓ VERIFIED" : "✗ REJECTED"}
                   {result.verification.verified
@@ -127,8 +130,8 @@ export default function AnsDemoPage() {
                 {result.paymentError && <p className="text-sm">Payment error: {result.paymentError}</p>}
 
                 <ol className="space-y-1 text-sm">
-                  {result.verification.checks.map((c) => (
-                    <li key={c.name}>
+                  {result.verification.checks.map((c, i) => (
+                    <li key={c.name} className="animate-fade-up" style={{ animationDelay: `${i * 150}ms` }}>
                       <strong>{c.ok ? "✓ PASSED" : "✗ FAILED"}</strong> · {c.name}: {c.detail}
                     </li>
                   ))}

@@ -48,7 +48,7 @@ export default function LeaderboardPage() {
         {!loading && !error && rows.length === 0 && <p>No players yet.</p>}
 
         {rows.length > 0 && (
-          <div className="overflow-x-auto rounded-lg border border-gray-700">
+          <div className="animate-fade-up overflow-x-auto rounded-lg border border-gray-700">
             <table className="w-full text-left text-sm">
               <caption className="sr-only">Players ranked by net worth in Hokie Bucks</caption>
               <thead className="bg-gray-900 text-xs uppercase tracking-wide text-gray-300">
@@ -61,10 +61,14 @@ export default function LeaderboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {rows.map((r) => (
+                {rows.map((r, i) => (
                   <tr
                     key={`${r.rank_number}-${r.display_name}`}
-                    className={r.is_you ? "border-t border-gray-700 bg-gray-800 font-semibold" : "border-t border-gray-700"}
+                    className={
+                      (r.is_you ? "border-t border-gray-700 bg-gray-800 font-semibold" : "border-t border-gray-700") +
+                      " animate-fade-in transition-colors duration-150 hover:bg-gray-800/60"
+                    }
+                    style={{ animationDelay: `${Math.min(i, 10) * 40}ms` }}
                   >
                     <td className="p-3">{r.rank_number}</td>
                     <td className="p-3">

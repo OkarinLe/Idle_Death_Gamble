@@ -27,7 +27,7 @@ export default function PriceChart({ points }: { points: ChartPoint[] }) {
   const trend = change > 0 ? `▲ up ${change}` : change < 0 ? `▼ down ${-change}` : "no change";
 
   return (
-    <figure className="mt-2">
+    <figure className="mt-2 animate-fade-in">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         role="img"
