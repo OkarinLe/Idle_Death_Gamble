@@ -5,11 +5,13 @@
 // sign-in status is always reachable, no matter which page you are on.
 import { useEffect, useState } from "react";
 import { useT } from "@/lib/i18n";
+import { useTradingMode } from "@/lib/tradingMode";
 import { LANGS, type Lang } from "@/lib/translations";
 import { createClient } from "@/lib/supabase/client";
 
 export default function AccessibilityBar() {
   const { lang, setLang, t } = useT();
+  const { trading } = useTradingMode();
   const [high, setHigh] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const supabase = createClient();
@@ -57,14 +59,22 @@ export default function AccessibilityBar() {
       >
         {t("a11y.skip")}
       </a>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-400 bg-gray-100 px-4 py-1 text-xs text-gray-900">
+      <div
+        className={
+          "flex flex-wrap items-center justify-between gap-3 border-b px-4 py-1 text-xs transition-colors duration-300 " +
+          (trading ? "border-gray-800 bg-black text-gray-100" : "border-gray-400 bg-gray-100 text-gray-900")
+        }
+      >
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="button"
             role="switch"
             aria-checked={high}
             onClick={toggle}
-            className="rounded border border-gray-700 px-2 py-0.5 font-semibold"
+            className={
+              "rounded border px-2 py-0.5 font-semibold transition-colors duration-300 " +
+              (trading ? "border-gray-600" : "border-gray-700")
+            }
           >
             {t("a11y.contrast")}: {high ? t("on") : t("off")}
           </button>
@@ -73,10 +83,15 @@ export default function AccessibilityBar() {
             id="lang-select"
             value={lang}
             onChange={(e) => setLang(e.target.value as Lang)}
-            className="rounded border border-gray-700 bg-white px-1 py-0.5"
+            className={
+              "rounded border px-1 py-0.5 transition-colors duration-300 " +
+              (trading ? "border-gray-600 bg-gray-900 text-gray-100" : "border-gray-700 bg-white text-gray-900")
+            }
           >
             {LANGS.map((l) => (
-              <option key={l.code} value={l.code} lang={l.code}>{l.label}</option>
+              <option key={l.code} value={l.code} lang={l.code} className={trading ? "bg-gray-900" : undefined}>
+                {l.label}
+              </option>
             ))}
           </select>
         </div>

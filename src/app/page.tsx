@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useT } from "@/lib/i18n";
+import { useTradingMode } from "@/lib/tradingMode";
 import { yesPrice, buyCost } from "@/lib/lmsr";
 import PriceChart, { type ChartPoint } from "@/components/PriceChart";
 import type { Place, Reading, Market } from "@/lib/types";
@@ -54,7 +55,7 @@ export default function Home() {
   const [latest, setLatest] = useState<Reading[]>([]);
   const [markets, setMarkets] = useState<Market[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [trading, setTrading] = useState(false);
+  const { trading, setTrading } = useTradingMode();
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState("");
   const [picked, setPicked] = useState<Pick | null>(null);
