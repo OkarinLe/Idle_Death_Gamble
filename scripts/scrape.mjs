@@ -61,5 +61,8 @@ async function run() {
   }
 }
 
-run();
-setInterval(run, 5 * 60 * 1000); // repeat every 5 minutes
+// With --once (used by the scheduled GitHub Action) run a single time and exit.
+// Without it, keep running every 5 minutes.
+run().then(() => {
+  if (!process.argv.includes("--once")) setInterval(run, 5 * 60 * 1000);
+});

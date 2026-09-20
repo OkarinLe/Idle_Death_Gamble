@@ -1,0 +1,35 @@
+# Once an hour the Market Maker Agent proposes new Yes/No markets from live readings.
+name: Market Maker Agent
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: market-maker
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      AI_PROVIDER: ${{ secrets.AI_PROVIDER }}
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      DATABRICKS_MODEL: ${{ secrets.DATABRICKS_MODEL }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      ANS_MODE: ${{ vars.ANS_MODE }}
+      ANS_DOMAIN: ${{ vars.ANS_DOMAIN }}
+      ANS_TRUSTED_LOG_HOSTS: ${{ vars.ANS_TRUSTED_LOG_HOSTS }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node scripts/market-maker.mjs

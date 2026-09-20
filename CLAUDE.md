@@ -58,3 +58,11 @@ VT-email login page, info-first home page with occupancy bars, the Trading mode 
 5. Side Kick page at /sidekick.
 6. Accessibility pass (keyboard, high-contrast mode, screen reader labels), optional language toggle (Spanish, Korean) and dietary tags.
 7. Deploy to a public link, README, demo script.
+
+## Status update (tasks 1 to 7)
+- Done: portfolio, leaderboard, sell (task 1); Market Maker with live-only data, gym head-count markets and a football win market (task 2); football Data Agent using the official hokiesports.com schedule (task 3, partly: dining, library and gyms are still Sample data); ANS verifier, agent accounts and payments, impostor demo at /ans (task 4, simulated registry); /sidekick (task 5); accessibility layer, high contrast, Spanish and Korean for home, login and Side Kick (task 6); README, DEMO.md, docs/ANS-SETUP.md, GitHub Actions (task 7).
+- Needs a person: run supabase/agents.sql once; real GoDaddy ANS registration (docs/ANS-SETUP.md); Vercel deploy and GitHub Actions secrets (README); native-speaker review of Spanish and Korean text.
+- Sources: VT Rec Sports forbids bots in robots.txt (do not scrape). hokiesports.com allows bots.
+- ANS code: src/lib/ans.ts (verifier), src/lib/ans-resolvers.ts (demo and live lookups), src/app/api/ans/demo/route.ts, src/app/ans/page.tsx. Never claim the demo registry is real: the page must keep saying it is simulated until ANS_MODE=live.
+- Translations live in src/lib/translations.ts. Every key must exist in en, es and ko (TypeScript enforces this).
+- SQL files run order for a new project: supabase/schema.sql, functions.sql, agents.sql.

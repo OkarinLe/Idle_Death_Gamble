@@ -1,0 +1,34 @@
+# Keeps the data flowing without anyone's laptop: every 5 minutes it saves new readings,
+# reads the football schedule, and settles markets that have ended.
+# Add the secrets listed in README.md (Settings > Secrets and variables > Actions).
+name: Agents (data + resolver)
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # GitHub may start it a few minutes late; that is fine
+  workflow_dispatch:        # lets you press "Run workflow" by hand
+
+concurrency:
+  group: agents
+  cancel-in-progress: false  # never run two at once
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Fake numbers for dining, library and gyms (labeled "Sample data") until real feeds exist.
+      - run: node scripts/scrape.mjs --once
+      # Real football schedule from hokiesports.com (polite: one page fetch per run).
+      - run: node scripts/football-agent.mjs --once
+      # Plain-rules payouts. Never AI.
+      - run: node scripts/resolve.mjs --once
