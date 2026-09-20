@@ -211,7 +211,7 @@ export default function Home() {
                 textShadow: dark ? "0 0 24px rgba(229, 117, 31, 0.35)" : "0 2px 6px rgba(134, 31, 65, 0.2)",
               }}
             >
-              Idle Death Gamble
+              VTVents
             </h1>
             {/* Decorative brand-color underline, not text, so it never affects contrast. */}
             <span

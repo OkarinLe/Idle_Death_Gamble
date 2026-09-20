@@ -81,7 +81,7 @@ export default function LoginPage() {
       <BackLink href="/" label={t("nav.back")} />
 
       <h1 className="text-2xl font-bold" style={{ color: "#861F41" }}>
-        Idle Death Gamble
+        VTVents
       </h1>
       <p>{mode === "signin" ? t("login.introIn") : t("login.introUp")}</p>
 

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Idle Death Gamble",
+  title: "VTVents",
   description: "A play-money prediction market for Virginia Tech. Live campus info, plus Yes/No markets in Trading mode.",
 };
 
