@@ -12,6 +12,13 @@ import type { Place, Reading, Market } from "@/lib/types";
 type Profile = { display_name: string; balance: number };
 type Pick = { marketId: string; side: "yes" | "no" };
 
+// Section order on the home page: sports first, then dining halls, then everything else
+// (gyms, the library, ...) lumped together as misc. Categories come from the `places` table.
+const CATEGORY_ORDER: Record<string, number> = { sports: 0, dining: 1 };
+function categoryRank(category: string) {
+  return CATEGORY_ORDER[category] ?? 2;
+}
+
 // Football card. Shows the game in progress, or else the next one. Past games are never shown.
 // The data comes from scripts/football-agent.mjs (saved on the place's meta).
 function GameCard({ place }: { place: Place }) {
@@ -78,7 +85,12 @@ export default function Home() {
       supabase.from("place_latest").select("*"),
       supabase.from("markets").select("*").eq("status", "open"),
     ]);
-    setPlaces((p.data as Place[]) ?? []);
+    // The query already sorts by name; Array.sort is stable, so this keeps each
+    // category alphabetical while grouping sports, then dining, then misc.
+    const sortedPlaces = [...((p.data as Place[]) ?? [])].sort(
+      (a, b) => categoryRank(a.category) - categoryRank(b.category)
+    );
+    setPlaces(sortedPlaces);
     setLatest((r.data as Reading[]) ?? []);
     // Live only: a market past its closing time is not tradable, so it is not shown.
     const openMarkets = ((m.data as Market[]) ?? []).filter((x) => !x.closes_at || new Date(x.closes_at).getTime() > Date.now());

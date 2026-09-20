@@ -11,7 +11,7 @@ create table if not exists public.places (
   id          uuid primary key default gen_random_uuid(),
   slug        text not null unique,          -- d2, owens, west-end, newman-library, ...
   name        text not null,
-  category    text default 'other',          -- dining, study, gym, sports
+  category    text default 'other',          -- dining, study, gym, recreational, sports
   description text,
   capacity    integer,                       -- most people allowed at once (gyms)
   meta        jsonb default '{}',            -- football agent stores live/upcoming games here

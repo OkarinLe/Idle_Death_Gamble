@@ -11,9 +11,9 @@ const supabase = createClient(
 // Football is a "place" only so its game result can live in the same readings table.
 const PLACES = [
   { slug: "war-memorial-hall", name: "War Memorial Hall", category: "gym", capacity: 1200 },
-  { slug: "mccomas-hall", name: "McComas Hall", category: "gym", capacity: 600 },
-  { slug: "esports", name: "Esports", category: "gym", capacity: 55 },
-  { slug: "bouldering-wall", name: "Bouldering Wall", category: "gym", capacity: 8 },
+  { slug: "mccomas-hall", name: "McComas Hall", category: "recreational", capacity: 600 },
+  { slug: "esports", name: "Esports", category: "recreational", capacity: 55 },
+  { slug: "bouldering-wall", name: "Bouldering Wall", category: "recreational", capacity: 8 },
   { slug: "hokies-football", name: "Hokies Football", category: "sports", capacity: null },
 ];
 
