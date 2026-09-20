@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { yesPrice } from "@/lib/lmsr";
+import { yesPrice, buyCost } from "@/lib/lmsr";
 import type { Place, Reading, Market } from "@/lib/types";
 
 type Profile = { display_name: string; balance: number };
+type Pick = { marketId: string; side: "yes" | "no" };
 
 export default function Home() {
   const router = useRouter();
@@ -19,49 +20,79 @@ export default function Home() {
   const [trading, setTrading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState("");
+  const [picked, setPicked] = useState<Pick | null>(null);
+  const [shares, setShares] = useState(10);
+  const [busy, setBusy] = useState(false);
+
+  async function loadData() {
+    const [p, r, m] = await Promise.all([
+      supabase.from("places").select("*").order("name"),
+      supabase.from("place_latest").select("*"),
+      supabase.from("markets").select("*").eq("status", "open"),
+    ]);
+    setPlaces((p.data as Place[]) ?? []);
+    setLatest((r.data as Reading[]) ?? []);
+    setMarkets((m.data as Market[]) ?? []);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data } = await supabase
+        .from("profiles")
+        .select("display_name, balance")
+        .eq("id", user.id)
+        .single();
+      setProfile((data as Profile) ?? null);
+    } else {
+      setProfile(null);
+    }
+    setLoading(false);
+  }
 
   useEffect(() => {
-    async function load() {
-      const [p, r, m] = await Promise.all([
-        supabase.from("places").select("*").order("name"),
-        supabase.from("place_latest").select("*"),
-        supabase.from("markets").select("*").eq("status", "open"),
-      ]);
-      setPlaces((p.data as Place[]) ?? []);
-      setLatest((r.data as Reading[]) ?? []);
-      setMarkets((m.data as Market[]) ?? []);
-
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("display_name, balance")
-          .eq("id", user.id)
-          .single();
-        if (data) setProfile(data as Profile);
-      }
-      setLoading(false);
-    }
-    load();
+    loadData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function toggleTrading() {
     setTrading(!trading);
     setNote("");
+    setPicked(null);
   }
 
-  function handleBuy() {
+  function handlePick(marketId: string, side: "yes" | "no") {
     if (!profile) {
       router.push("/login");
       return;
     }
-    setNote("Buying opens in the next step.");
+    setPicked({ marketId, side });
+    setShares(10);
+    setNote("");
+  }
+
+  async function confirmBuy() {
+    if (!picked) return;
+    setBusy(true);
+    setNote("");
+    const { data, error } = await supabase.rpc("buy_shares", {
+      p_market_id: picked.marketId,
+      p_side: picked.side,
+      p_shares: shares,
+    });
+    setBusy(false);
+    if (error) {
+      setNote(error.message);
+      return;
+    }
+    const result = data as { cost: number };
+    setNote(`Bought ${shares} ${picked.side.toUpperCase()} shares for ${Number(result.cost).toFixed(2)} Hokie Bucks.`);
+    setPicked(null);
+    await loadData();
   }
 
   async function signOut() {
     await supabase.auth.signOut();
     setProfile(null);
+    setPicked(null);
   }
 
   function reading(placeId: string, metric: string) {
@@ -188,13 +219,18 @@ export default function Home() {
               )}
 
               {trading && (
-                <div className="mt-4 space-y-3 border-t border-gray-700 pt-3">
+                <div className="mt-4 space-y-4 border-t border-gray-700 pt-3">
                   {placeMarkets.length === 0 && (
                     <p className="text-sm opacity-70">No open markets for this place yet.</p>
                   )}
                   {placeMarkets.map((m) => {
                     const yes = Math.round(yesPrice(m.q_yes, m.q_no, m.liquidity_b) * 100);
                     const no = 100 - yes;
+                    const isPicked = picked?.marketId === m.id;
+                    const cost = isPicked
+                      ? buyCost(m.q_yes, m.q_no, m.liquidity_b, picked.side, shares)
+                      : 0;
+
                     return (
                       <div key={m.id}>
                         <p className="font-medium">{m.question}</p>
@@ -204,22 +240,66 @@ export default function Home() {
                         </p>
                         <div className="mt-2 grid grid-cols-2 gap-2">
                           <button
-                            onClick={handleBuy}
+                            onClick={() => handlePick(m.id, "yes")}
                             aria-label={`Buy Yes at ${yes} cents`}
+                            aria-pressed={isPicked && picked.side === "yes"}
                             className="rounded p-2 font-semibold text-white"
-                            style={{ backgroundColor: "#0B6E99" }}
+                            style={{
+                              backgroundColor: "#0B6E99",
+                              outline: isPicked && picked.side === "yes" ? "3px solid #fff" : "none",
+                            }}
                           >
                             ▲ Yes {yes}¢
                           </button>
                           <button
-                            onClick={handleBuy}
+                            onClick={() => handlePick(m.id, "no")}
                             aria-label={`Buy No at ${no} cents`}
+                            aria-pressed={isPicked && picked.side === "no"}
                             className="rounded p-2 font-semibold text-white"
-                            style={{ backgroundColor: "#B34700" }}
+                            style={{
+                              backgroundColor: "#B34700",
+                              outline: isPicked && picked.side === "no" ? "3px solid #fff" : "none",
+                            }}
                           >
                             ▼ No {no}¢
                           </button>
                         </div>
+
+                        {isPicked && (
+                          <div className="mt-3 rounded border border-gray-600 p-3">
+                            <label htmlFor={`shares-${m.id}`} className="text-sm font-medium">
+                              Shares of {picked.side.toUpperCase()} (each pays 1 Hokie Buck if you're right)
+                            </label>
+                            <input
+                              id={`shares-${m.id}`}
+                              type="number"
+                              min={1}
+                              max={1000}
+                              step={1}
+                              value={shares}
+                              onChange={(e) =>
+                                setShares(Math.min(1000, Math.max(1, Math.floor(Number(e.target.value) || 1))))
+                              }
+                              className="mt-1 w-full rounded border border-gray-500 bg-transparent p-2"
+                            />
+                            <p className="mt-2 text-sm">
+                              Cost: <span className="font-semibold">{cost.toFixed(2)} Hokie Bucks</span>
+                            </p>
+                            <div className="mt-2 flex gap-2">
+                              <button
+                                onClick={confirmBuy}
+                                disabled={busy}
+                                className="rounded px-3 py-1 font-semibold disabled:opacity-50"
+                                style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}
+                              >
+                                {busy ? "Buying..." : "Confirm buy"}
+                              </button>
+                              <button onClick={() => setPicked(null)} className="rounded border border-gray-500 px-3 py-1">
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
