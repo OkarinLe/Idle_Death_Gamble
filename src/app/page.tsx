@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useT } from "@/lib/i18n";
 import { yesPrice, buyCost } from "@/lib/lmsr";
 import PriceChart, { type ChartPoint } from "@/components/PriceChart";
 import type { Place, Reading, Market } from "@/lib/types";
@@ -14,9 +15,10 @@ type Pick = { marketId: string; side: "yes" | "no" };
 // Football card. Shows the game in progress, or else the next one. Past games are never shown.
 // The data comes from scripts/football-agent.mjs (saved on the place's meta).
 function GameCard({ place }: { place: Place }) {
+  const { t } = useT();
   const live = place.meta?.live;
   const game = live ?? place.meta?.upcoming?.[0];
-  if (!game) return <p className="mt-3 text-sm opacity-70">No live or upcoming game right now.</p>;
+  if (!game) return <p className="mt-3 text-sm opacity-70">{t("game.none")}</p>;
 
   const when = new Date(game.kickoff).toLocaleString([], {
     weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: "America/New_York",
@@ -24,13 +26,13 @@ function GameCard({ place }: { place: Place }) {
   return (
     <div className="mt-3 text-sm">
       <p className="font-semibold">
-        {live ? "LIVE now: " : "Next game: "}Virginia Tech {game.home ? "vs." : "at"} {game.opponent}
+        {live ? t("game.live") : t("game.next")}{t(game.home ? "game.vs" : "game.at", { opp: game.opponent })}
       </p>
       <p className="mt-1 text-xs opacity-70">
         {live
-          ? "In progress. The final score shows up when the game ends."
-          : game.time_tbd ? "Start time to be announced" : `${when} ET`}
-        {" · Official schedule, hokiesports.com"}
+          ? t("game.inProgress")
+          : game.time_tbd ? t("game.tbd") : `${when} ET`}
+        {` · ${t("game.source")}`}
       </p>
     </div>
   );
@@ -38,6 +40,7 @@ function GameCard({ place }: { place: Place }) {
 
 export default function Home() {
   const router = useRouter();
+  const { t } = useT();
   const supabase = createClient();
 
   const [places, setPlaces] = useState<Place[]>([]);
@@ -77,7 +80,8 @@ export default function Home() {
     ]);
     setPlaces((p.data as Place[]) ?? []);
     setLatest((r.data as Reading[]) ?? []);
-    const openMarkets = (m.data as Market[]) ?? [];
+    // Live only: a market past its closing time is not tradable, so it is not shown.
+    const openMarkets = ((m.data as Market[]) ?? []).filter((x) => !x.closes_at || new Date(x.closes_at).getTime() > Date.now());
     setMarkets(openMarkets);
     await loadHistory(openMarkets);
 
@@ -140,7 +144,7 @@ export default function Home() {
       return;
     }
     const result = data as { cost: number };
-    setNote(`Bought ${shares} ${picked.side.toUpperCase()} shares for ${Number(result.cost).toFixed(2)} Hokie Bucks.`);
+    setNote(t("bought", { shares, side: t(picked.side).toUpperCase(), cost: Number(result.cost).toFixed(2) }));
     setPicked(null);
     await loadData();
   }
@@ -156,8 +160,8 @@ export default function Home() {
   }
 
   function timeLabel(r: Reading) {
-    const t = new Date(r.recorded_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-    return r.source === "seed" ? `Sample data, ${t}` : `Updated ${t}`;
+    const time = new Date(r.recorded_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    return t(r.source === "seed" ? "sample" : "updated", { t: time });
   }
 
   const dark = trading;
@@ -170,18 +174,18 @@ export default function Home() {
         </h1>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Link href="/leaderboard" className="text-sm underline">Leaderboard</Link>
-          {profile && <Link href="/portfolio" className="text-sm underline">Portfolio</Link>}
+          <Link href="/leaderboard" className="text-sm underline">{t("nav.leaderboard")}</Link>
+          {profile && <Link href="/portfolio" className="text-sm underline">{t("nav.portfolio")}</Link>}
           {profile && (
             <>
               <span className="rounded-full px-3 py-1 text-sm font-semibold" style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}>
                 {Number(profile.balance).toFixed(2)} Hokie Bucks
               </span>
-              <button onClick={signOut} className="text-sm underline">Sign out</button>
+              <button onClick={signOut} className="text-sm underline">{t("nav.signOut")}</button>
             </>
           )}
           {!profile && !loading && (
-            <a href="/login" className="text-sm underline">Sign in</a>
+            <a href="/login" className="text-sm underline">{t("nav.signIn")}</a>
           )}
 
           <button
@@ -194,38 +198,38 @@ export default function Home() {
             <span
               aria-hidden="true"
               className="inline-block h-4 w-8 rounded-full p-0.5"
-              style={{ backgroundColor: trading ? "#E5751F" : "#9ca3af" }}
+              style={{ backgroundColor: trading ? "#E5751F" : "#4b5563" }}
             >
               <span
                 className="block h-3 w-3 rounded-full bg-white transition-transform"
                 style={{ transform: trading ? "translateX(16px)" : "translateX(0)" }}
               />
             </span>
-            Trading mode: {trading ? "On" : "Off"}
+            {t("trading.label", { state: trading ? t("on") : t("off") })}
           </button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl space-y-4 p-4">
+      <main id="main" className="mx-auto max-w-3xl space-y-4 p-4">
         <p className={dark ? "text-gray-300" : "text-gray-600"}>
           {trading
-            ? "Play money only. Pick Yes or No on any market below."
-            : "Live campus info. Turn on Trading mode to predict what happens next."}
+            ? t("intro.trading")
+            : t("intro.info")}
         </p>
 
         {trading && !profile && !loading && (
           <p className="rounded border border-orange-500 p-2 text-sm">
-            You can browse prices now.{" "}
-            <a href="/login" className="font-semibold underline">Sign in with your VT email</a>{" "}
-            to place trades.
+            {t("browse.a")}{" "}
+            <a href="/login" className="font-semibold underline">{t("browse.link")}</a>{" "}
+            {t("browse.b")}
           </p>
         )}
 
-        <p role="status" aria-live="polite" className="min-h-6 text-sm font-medium" style={{ color: "#E5751F" }}>
+        <p role="status" aria-live="polite" className="min-h-6 text-sm font-medium" style={{ color: dark ? "#E5751F" : "#B34700" }}>
           {note}
         </p>
 
-        {loading && <p>Loading...</p>}
+        {loading && <p>{t("loading")}</p>}
 
         {places.map((place) => {
           const occ = reading(place.id, "occupancy_pct");
@@ -252,13 +256,14 @@ export default function Home() {
               ) : occ ? (
                 <div className="mt-3">
                   <div className="flex justify-between text-sm">
-                    <span>Occupancy</span>
-                    <span className="font-semibold">{Math.round(occ.value)}% full</span>
+                    <span>{t("occupancy")}</span>
+                    <span className="font-semibold">{t("full", { n: Math.round(occ.value) })}</span>
                   </div>
                   {people && (
                     <p className="text-sm">
-                      About <span className="font-semibold">{Math.round(people.value)}</span> people
-                      {place.capacity ? ` of ${place.capacity}` : ""}
+                      {place.capacity
+                        ? t("peopleOf", { n: Math.round(people.value), cap: place.capacity })
+                        : t("people", { n: Math.round(people.value) })}
                     </p>
                   )}
                   <div
@@ -273,12 +278,12 @@ export default function Home() {
                   </div>
                 </div>
               ) : (
-                <p className="mt-3 text-sm opacity-70">No occupancy data yet.</p>
+                <p className="mt-3 text-sm opacity-70">{t("noOcc")}</p>
               )}
 
               {wait && (
                 <p className="mt-2 text-sm">
-                  Wait: <span className="font-semibold">{Math.round(wait.value)} min</span>
+                  {t("wait", { n: Math.round(wait.value) })}
                 </p>
               )}
               {(occ || wait) && (
@@ -288,7 +293,7 @@ export default function Home() {
               {trading && (
                 <div className="mt-4 space-y-4 border-t border-gray-700 pt-3">
                   {placeMarkets.length === 0 && (
-                    <p className="text-sm opacity-70">No open markets for this place yet.</p>
+                    <p className="text-sm opacity-70">{t("noMarkets")}</p>
                   )}
                   {placeMarkets.map((m) => {
                     const yes = Math.round(yesPrice(m.q_yes, m.q_no, m.liquidity_b) * 100);
@@ -302,14 +307,14 @@ export default function Home() {
                       <div key={m.id}>
                         <p className="font-medium">{m.question}</p>
                         <p className="text-xs opacity-70">
-                          {m.ticker} · Volume {Number(m.volume).toFixed(0)}
-                          {m.closes_at && ` · Closes ${new Date(m.closes_at).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`}
+                          {m.ticker} · {t("volume")} {Number(m.volume).toFixed(0)}
+                          {m.closes_at && ` · ${t("closes")} ${new Date(m.closes_at).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}`}
                         </p>
                         <PriceChart points={history[m.id] ?? []} />
                         <div className="mt-2 grid grid-cols-2 gap-2">
                           <button
                             onClick={() => handlePick(m.id, "yes")}
-                            aria-label={`Buy Yes at ${yes} cents`}
+                            aria-label={t("buyYes", { n: yes })}
                             aria-pressed={isPicked && picked.side === "yes"}
                             className="rounded p-2 font-semibold text-white"
                             style={{
@@ -317,11 +322,11 @@ export default function Home() {
                               outline: isPicked && picked.side === "yes" ? "3px solid #fff" : "none",
                             }}
                           >
-                            ▲ Yes {yes}¢
+                            ▲ {t("yes")} {yes}¢
                           </button>
                           <button
                             onClick={() => handlePick(m.id, "no")}
-                            aria-label={`Buy No at ${no} cents`}
+                            aria-label={t("buyNo", { n: no })}
                             aria-pressed={isPicked && picked.side === "no"}
                             className="rounded p-2 font-semibold text-white"
                             style={{
@@ -329,14 +334,14 @@ export default function Home() {
                               outline: isPicked && picked.side === "no" ? "3px solid #fff" : "none",
                             }}
                           >
-                            ▼ No {no}¢
+                            ▼ {t("no")} {no}¢
                           </button>
                         </div>
 
                         {isPicked && (
                           <div className="mt-3 rounded border border-gray-600 p-3">
                             <label htmlFor={`shares-${m.id}`} className="text-sm font-medium">
-                              Shares of {picked.side.toUpperCase()} (each pays 1 Hokie Buck if you&apos;re right)
+                              {t("shares", { side: t(picked.side).toUpperCase() })}
                             </label>
                             <input
                               id={`shares-${m.id}`}
@@ -351,7 +356,7 @@ export default function Home() {
                               className="mt-1 w-full rounded border border-gray-500 bg-transparent p-2"
                             />
                             <p className="mt-2 text-sm">
-                              Cost: <span className="font-semibold">{cost.toFixed(2)} Hokie Bucks</span>
+                              {t("cost")} <span className="font-semibold">{cost.toFixed(2)} Hokie Bucks</span>
                             </p>
                             <div className="mt-2 flex gap-2">
                               <button
@@ -360,10 +365,10 @@ export default function Home() {
                                 className="rounded px-3 py-1 font-semibold disabled:opacity-50"
                                 style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}
                               >
-                                {busy ? "Buying..." : "Confirm buy"}
+                                {busy ? t("buying") : t("confirmBuy")}
                               </button>
                               <button onClick={() => setPicked(null)} className="rounded border border-gray-500 px-3 py-1">
-                                Cancel
+                                {t("cancel")}
                               </button>
                             </div>
                           </div>

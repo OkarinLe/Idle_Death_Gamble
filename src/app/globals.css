@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Every page paints its own background (light by default, dark in Trading mode), so the body is
+   always white. We do NOT switch to a dark body from the visitor's OS setting: pages designed
+   for a light background would then show dark text on a dark background. */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -12,15 +15,77 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* ---------- Accessibility ---------- */
+
+/* Keyboard focus: a dark inner ring plus an orange outer ring, visible on light AND dark backgrounds. */
+:focus-visible {
+  outline: 3px solid #e5751f;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #1a1a1a;
+}
+
+/* People who ask their device for less motion get none. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode. Turned on by the "High contrast" button, or automatically when the
+   device asks for more contrast. Everything becomes white on black, links yellow, borders white.
+   Yes/No stay distinguishable because they also use arrows and words, never color alone. */
+html[data-contrast="high"] body,
+html[data-contrast="high"] body * {
+  background-color: #000 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+html[data-contrast="high"] a,
+html[data-contrast="high"] a * {
+  color: #ff0 !important;
+  text-decoration: underline !important;
+}
+html[data-contrast="high"] button,
+html[data-contrast="high"] select,
+html[data-contrast="high"] input {
+  border: 2px solid #fff !important;
+}
+html[data-contrast="high"] [role="progressbar"] {
+  background-color: #555 !important;
+  border: 1px solid #fff !important;
+}
+html[data-contrast="high"] [role="progressbar"] > div {
+  background-color: #ff0 !important;
+}
+html[data-contrast="high"] :focus-visible {
+  outline: 4px solid #ff0;
+  box-shadow: 0 0 0 2px #000;
+}
+
+/* High contrast: keep switches visible. The track is gray (yellow when on) with a white outline,
+   and the knob is white (black on the yellow track). State is also written out as "On"/"Off". */
+html[data-contrast="high"] [role="switch"] span[aria-hidden="true"] {
+  background-color: #555 !important;
+  border: 2px solid #fff !important;
+}
+html[data-contrast="high"] [role="switch"][aria-checked="true"] span[aria-hidden="true"] {
+  background-color: #ff0 !important;
+}
+html[data-contrast="high"] [role="switch"] span[aria-hidden="true"] > span {
+  background-color: #fff !important;
+}
+html[data-contrast="high"] [role="switch"][aria-checked="true"] span[aria-hidden="true"] > span {
+  background-color: #000 !important;
 }

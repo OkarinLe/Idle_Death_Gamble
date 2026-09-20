@@ -37,7 +37,7 @@ export default function LeaderboardPage() {
         <Link href="/portfolio" className="text-sm underline">Your portfolio</Link>
       </header>
 
-      <main className="mx-auto max-w-3xl space-y-4 p-4">
+      <main id="main" className="mx-auto max-w-3xl space-y-4 p-4">
         <p className="text-gray-300">
           Ranked by net worth: Hokie Bucks in your balance plus your open shares at today&apos;s prices.
         </p>

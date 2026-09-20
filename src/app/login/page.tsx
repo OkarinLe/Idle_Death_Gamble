@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import BackLink from "@/components/BackLink";
+import { useT } from "@/lib/i18n";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useT();
   const supabase = createClient();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -20,7 +22,7 @@ export default function LoginPage() {
     const cleanEmail = email.trim().toLowerCase();
 
     if (!cleanEmail.endsWith("@vt.edu")) {
-      setMessage("Please use your @vt.edu email.");
+      setMessage(t("login.needVt"));
       return;
     }
 
@@ -29,7 +31,7 @@ export default function LoginPage() {
       const { data, error } = await supabase.auth.signUp({ email: cleanEmail, password });
       setLoading(false);
       if (error) return setMessage(error.message);
-      if (!data.session) return setMessage("Check your email to confirm, then sign in.");
+      if (!data.session) return setMessage(t("login.confirm"));
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
       setLoading(false);
@@ -41,16 +43,16 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 p-6">
-      <BackLink href="/" label="Back" />
+    <main id="main" className="mx-auto flex min-h-screen max-w-sm flex-col justify-center gap-4 p-6">
+      <BackLink href="/" label={t("nav.back")} />
 
       <h1 className="text-2xl font-bold" style={{ color: "#861F41" }}>
         Idle Death Gamble
       </h1>
-      <p>{mode === "signin" ? "Sign in with your VT email." : "Create an account with your VT email."}</p>
+      <p>{mode === "signin" ? t("login.introIn") : t("login.introUp")}</p>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <label htmlFor="email" className="font-medium">VT email</label>
+        <label htmlFor="email" className="font-medium">{t("login.email")}</label>
         <input
           id="email"
           type="email"
@@ -62,7 +64,7 @@ export default function LoginPage() {
           className="rounded border border-gray-400 p-2"
         />
 
-        <label htmlFor="password" className="font-medium">Password</label>
+        <label htmlFor="password" className="font-medium">{t("login.password")}</label>
         <input
           id="password"
           type="password"
@@ -80,7 +82,7 @@ export default function LoginPage() {
           className="rounded p-2 font-semibold text-white disabled:opacity-50"
           style={{ backgroundColor: "#861F41" }}
         >
-          {loading ? "Please wait..." : mode === "signin" ? "Sign in" : "Sign up"}
+          {loading ? t("login.wait") : mode === "signin" ? t("login.signIn") : t("login.signUp")}
         </button>
       </form>
 
@@ -93,7 +95,7 @@ export default function LoginPage() {
         onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
         className="text-left text-sm underline"
       >
-        {mode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}
+        {mode === "signin" ? t("login.toUp") : t("login.toIn")}
       </button>
     </main>
   );

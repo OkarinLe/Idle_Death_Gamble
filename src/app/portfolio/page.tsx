@@ -148,7 +148,7 @@ export default function PortfolioPage() {
         <Link href="/leaderboard" className="text-sm underline">Leaderboard</Link>
       </header>
 
-      <main className="mx-auto max-w-3xl space-y-4 p-4">
+      <main id="main" className="mx-auto max-w-3xl space-y-4 p-4">
         <p role="status" aria-live="polite" className="min-h-6 text-sm font-medium" style={{ color: "#E5751F" }}>
           {note}
         </p>
