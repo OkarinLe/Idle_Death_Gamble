@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { useTradingMode } from "@/lib/tradingMode";
 import { yesPrice, sellProceeds } from "@/lib/lmsr";
 import BackLink from "@/components/BackLink";
 import type { Market, Position, Trade } from "@/lib/types";
@@ -27,6 +28,10 @@ function SideBadge({ side }: { side: Side }) {
 
 export default function PortfolioPage() {
   const supabase = createClient();
+  // Same idea as the home page: light while just browsing, dark while Trading mode is on.
+  // The toggle itself lives on the home page; this page only reads the shared state.
+  const { trading } = useTradingMode();
+  const dark = trading;
 
   const [loading, setLoading] = useState(true);
   const [signedIn, setSignedIn] = useState(false);
@@ -138,15 +143,25 @@ export default function PortfolioPage() {
     0
   );
 
+  // Orange reads fine on black, but fails contrast on white, so light mode uses a darker
+  // orange for status/accent text (same trick the home page uses).
+  const accent = dark ? "#E5751F" : "#861F41";
+  const accentText = dark ? "#E5751F" : "#B34700";
+  const cardClass = dark
+    ? "border-gray-700 bg-gray-900 hover:border-gray-500"
+    : "border-gray-300 bg-white shadow-sm hover:border-gray-400";
+  const statCardClass = dark ? "border-gray-700 bg-gray-900" : "border-gray-300 bg-white shadow-sm";
+  const secondaryText = dark ? "text-gray-300" : "text-gray-600";
+
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
-      <header className="border-b border-gray-800 bg-black">
+    <div className={(dark ? "min-h-screen bg-gray-950 text-gray-100" : "min-h-screen bg-white text-gray-900") + " transition-colors duration-300"}>
+      <header className={"border-b transition-colors duration-300 " + (dark ? "border-gray-800 bg-black" : "border-gray-200 bg-white")}>
         <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 p-4">
           <div className="space-y-2">
             <BackLink href="/" label="Back to campus info" />
             <h1
-              className="text-3xl font-extrabold tracking-tight sm:text-4xl"
-              style={{ color: "#E5751F", textShadow: "0 0 24px rgba(229, 117, 31, 0.35)" }}
+              className="text-3xl font-extrabold tracking-tight transition-colors duration-300 sm:text-4xl"
+              style={{ color: accent, textShadow: dark ? "0 0 24px rgba(229, 117, 31, 0.35)" : "none" }}
             >
               Your portfolio
             </h1>
@@ -154,7 +169,7 @@ export default function PortfolioPage() {
           <Link
             href="/leaderboard"
             className="rounded-full border-2 px-3 py-1 text-sm font-semibold transition-transform duration-150 hover:scale-105 active:scale-95"
-            style={{ borderColor: "#E5751F" }}
+            style={{ borderColor: accent }}
           >
             Leaderboard
           </Link>
@@ -167,7 +182,7 @@ export default function PortfolioPage() {
           role="status"
           aria-live="polite"
           className={"min-h-6 text-sm font-medium" + (note ? " animate-fade-in" : "")}
-          style={{ color: "#E5751F" }}
+          style={{ color: accentText }}
         >
           {note}
         </p>
@@ -191,11 +206,11 @@ export default function PortfolioPage() {
               ].map(([label, value, icon], i) => {
                 const isNetWorth = label === "Net worth";
                 const card = (
-                  <div className={"h-full rounded-lg p-3" + (isNetWorth ? " bg-gray-900" : " border border-gray-700 bg-gray-900")}>
-                    <dt className="flex items-center gap-1.5 text-xs uppercase tracking-wide text-gray-300">
+                  <div className={"h-full rounded-lg p-3" + (isNetWorth ? (dark ? " bg-gray-900" : " bg-white") : " border " + statCardClass)}>
+                    <dt className={"flex items-center gap-1.5 text-xs uppercase tracking-wide " + secondaryText}>
                       <span aria-hidden="true">{icon}</span> {label as string}
                     </dt>
-                    <dd className={isNetWorth ? "text-2xl font-bold" : "text-xl font-semibold"} style={isNetWorth ? { color: "#E5751F" } : undefined}>
+                    <dd className={isNetWorth ? "text-2xl font-bold" : "text-xl font-semibold"} style={isNetWorth ? { color: accentText } : undefined}>
                       {money(value as number)} Hokie Bucks
                     </dd>
                   </div>
@@ -217,12 +232,12 @@ export default function PortfolioPage() {
 
             <h2
               className="mt-2 border-l-4 pl-3 text-lg font-semibold tracking-tight"
-              style={{ borderColor: "#E5751F" }}
+              style={{ borderColor: accent }}
             >
               Open positions
             </h2>
             {openRows.length === 0 && (
-              <p className="text-sm text-gray-300">
+              <p className={"text-sm " + secondaryText}>
                 You do not own any shares yet. Go to the <Link href="/" className="underline">home page</Link>,
                 turn on Trading mode, and pick Yes or No on a market.
               </p>
@@ -231,11 +246,11 @@ export default function PortfolioPage() {
             {openRows.map(({ p, m }, i) => (
               <section
                 key={m.id}
-                className="animate-fade-up rounded-lg border border-gray-700 bg-gray-900 p-4 transition-colors duration-150 hover:border-gray-500"
+                className={"animate-fade-up rounded-lg border p-4 transition-colors duration-150 " + cardClass}
                 style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
               >
                 <h3 className="font-medium">{m.question}</h3>
-                <p className="text-xs text-gray-300">{m.ticker}</p>
+                <p className={"text-xs " + secondaryText}>{m.ticker}</p>
 
                 {(["yes", "no"] as Side[])
                   .filter((side) => owned(p, side) > 0)
@@ -246,12 +261,12 @@ export default function PortfolioPage() {
                     const inputId = `sell-${m.id}-${side}`;
 
                     return (
-                      <div key={side} className="mt-3 border-t border-gray-700 pt-3">
+                      <div key={side} className={"mt-3 border-t pt-3 " + (dark ? "border-gray-700" : "border-gray-200")}>
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div>
                             <SideBadge side={side} />{" "}
                             <span className="font-semibold">{plural(have, "share")}</span>
-                            <p className="text-sm text-gray-300">
+                            <p className={"text-sm " + secondaryText}>
                               Worth {money(have * sharePrice(m, side))} now · You put in {money(netSpent(m.id, side))}
                             </p>
                           </div>
@@ -266,7 +281,7 @@ export default function PortfolioPage() {
                         </div>
 
                         {isPicked && (
-                          <div className="mt-3 animate-fade-up rounded border border-gray-600 p-3">
+                          <div className={"mt-3 animate-fade-up rounded border p-3 " + (dark ? "border-gray-600" : "border-gray-300")}>
                             <label htmlFor={inputId} className="text-sm font-medium">
                               Shares of {side.toUpperCase()} to sell (you own {have})
                             </label>
@@ -322,11 +337,11 @@ export default function PortfolioPage() {
                   return (
                     <section
                       key={m.id}
-                      className="animate-fade-up rounded-lg border border-gray-700 bg-gray-900 p-4"
+                      className={"animate-fade-up rounded-lg border p-4 " + cardClass}
                       style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
                     >
                       <h3 className="font-medium">{m.question}</h3>
-                      <p className="text-xs text-gray-300">{m.ticker}</p>
+                      <p className={"text-xs " + secondaryText}>{m.ticker}</p>
                       <p className="mt-2 text-sm">
                         {m.status === "resolved" && m.outcome ? (
                           <>
