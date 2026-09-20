@@ -8,6 +8,10 @@ import type { LeaderboardRow } from "@/lib/types";
 
 const money = (n: number) => Number(n).toFixed(2);
 
+// A small trophy emoji for the top 3 ranks. Decorative only: the rank number is always
+// shown too, so nothing here is conveyed by the emoji (or a color) alone.
+const MEDALS: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
+
 export default function LeaderboardPage() {
   const supabase = createClient();
   const [rows, setRows] = useState<LeaderboardRow[]>([]);
@@ -29,12 +33,25 @@ export default function LeaderboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
-      <header className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 p-4">
-        <div className="space-y-2">
-          <BackLink href="/" label="Back to campus info" />
-          <h1 className="text-2xl font-bold" style={{ color: "#E5751F" }}>Leaderboard</h1>
+      <header className="border-b border-gray-800 bg-black">
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 p-4">
+          <div className="space-y-2">
+            <BackLink href="/" label="Back to campus info" />
+            <h1
+              className="text-3xl font-extrabold tracking-tight sm:text-4xl"
+              style={{ color: "#E5751F", textShadow: "0 0 24px rgba(229, 117, 31, 0.35)" }}
+            >
+              Leaderboard
+            </h1>
+          </div>
+          <Link
+            href="/portfolio"
+            className="rounded-full border-2 px-3 py-1 text-sm font-semibold transition-transform duration-150 hover:scale-105 active:scale-95"
+            style={{ borderColor: "#E5751F" }}
+          >
+            Your portfolio
+          </Link>
         </div>
-        <Link href="/portfolio" className="text-sm underline">Your portfolio</Link>
       </header>
 
       <main id="main" className="mx-auto max-w-3xl space-y-4 p-4">
@@ -48,11 +65,11 @@ export default function LeaderboardPage() {
         {!loading && !error && rows.length === 0 && <p>No players yet.</p>}
 
         {rows.length > 0 && (
-          <div className="animate-fade-up overflow-x-auto rounded-lg border border-gray-700">
+          <div className="animate-fade-up overflow-x-auto rounded-lg border border-gray-700 shadow-lg shadow-black/40">
             <table className="w-full text-left text-sm">
               <caption className="sr-only">Players ranked by net worth in Hokie Bucks</caption>
               <thead className="bg-gray-900 text-xs uppercase tracking-wide text-gray-300">
-                <tr>
+                <tr className="border-b-2" style={{ borderColor: "#861F41" }}>
                   <th scope="col" className="p-3">Rank</th>
                   <th scope="col" className="p-3">Player</th>
                   <th scope="col" className="p-3 text-right">Balance</th>
@@ -70,15 +87,28 @@ export default function LeaderboardPage() {
                     }
                     style={{ animationDelay: `${Math.min(i, 10) * 40}ms` }}
                   >
-                    <td className="p-3">{r.rank_number}</td>
+                    <td className="p-3">
+                      {/* The rank number is always shown too, so the medal never carries meaning alone. */}
+                      {MEDALS[r.rank_number] && <span aria-hidden="true">{MEDALS[r.rank_number]} </span>}
+                      {r.rank_number}
+                    </td>
                     <td className="p-3">
                       {r.display_name}
                       {/* Text label, so "you" is not shown by color alone. */}
-                      {r.is_you && <span className="ml-2 rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-900">You</span>}
+                      {r.is_you && (
+                        <span
+                          className="ml-2 rounded-full px-2 py-0.5 text-xs font-semibold"
+                          style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}
+                        >
+                          You
+                        </span>
+                      )}
                     </td>
                     <td className="p-3 text-right">{money(r.balance)}</td>
                     <td className="p-3 text-right">{money(r.positions_value)}</td>
-                    <td className="p-3 text-right">{money(r.net_worth)}</td>
+                    <td className="p-3 text-right font-semibold" style={{ color: "#E5751F" }}>
+                      {money(r.net_worth)}
+                    </td>
                   </tr>
                 ))}
               </tbody>

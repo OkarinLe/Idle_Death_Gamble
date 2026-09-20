@@ -115,6 +115,14 @@ export default function Home() {
     // Loading data when the page opens is the whole point of this effect.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
+    // Sign in/out now happens from AccessibilityBar (top of every page), not from a button
+    // on this page. Watching auth state here keeps the balance badge and Trading mode in
+    // sync no matter where the sign-out click came from.
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      loadData();
+      setPicked(null);
+    });
+    return () => sub.subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -161,12 +169,6 @@ export default function Home() {
     await loadData();
   }
 
-  async function signOut() {
-    await supabase.auth.signOut();
-    setProfile(null);
-    setPicked(null);
-  }
-
   function reading(placeId: string, metric: string) {
     return latest.find((r) => r.place_id === placeId && r.metric === metric);
   }
@@ -185,30 +187,56 @@ export default function Home() {
           "you're trading now" tone apart from the everyday campus-info look. */}
       <header
         className={
-          "border-b transition-colors duration-300 " +
+          "relative border-b transition-colors duration-300 " +
           (dark ? "border-gray-800 bg-black" : "border-gray-200 bg-white")
         }
       >
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 p-4">
-          <h1 className="text-2xl font-bold transition-colors duration-300" style={{ color: dark ? "#E5751F" : "#861F41" }}>
-            Idle Death Gamble
-          </h1>
+        {/* Balance, pinned to the corner right under the AccessibilityBar's language/contrast row
+            above it. Sign in/out lives in that same bar now, not here. */}
+        {profile && (
+          <div className="absolute right-4 top-4">
+            <span className="rounded-full px-3 py-1 text-sm font-semibold" style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}>
+              {Number(profile.balance).toFixed(2)} Hokie Bucks
+            </span>
+          </div>
+        )}
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Link href="/leaderboard" className="text-sm underline">{t("nav.leaderboard")}</Link>
-            {profile && <Link href="/portfolio" className="text-sm underline">{t("nav.portfolio")}</Link>}
+        <div className="mx-auto max-w-3xl p-4">
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h1
+              className="text-4xl font-extrabold tracking-tight transition-colors duration-300 sm:text-5xl"
+              style={{
+                color: dark ? "#E5751F" : "#861F41",
+                textShadow: dark ? "0 0 24px rgba(229, 117, 31, 0.35)" : "0 2px 6px rgba(134, 31, 65, 0.2)",
+              }}
+            >
+              Idle Death Gamble
+            </h1>
+            {/* Decorative brand-color underline, not text, so it never affects contrast. */}
+            <span
+              aria-hidden="true"
+              className="h-1 w-28 rounded-full"
+              style={{ background: "linear-gradient(to right, #861F41, #E5751F)" }}
+            />
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/leaderboard"
+              className="rounded-full border-2 px-3 py-1 text-sm font-semibold transition-transform duration-150 hover:scale-105 active:scale-95"
+              style={{ borderColor: dark ? "#E5751F" : "#861F41" }}
+            >
+              {t("nav.leaderboard")}
+            </Link>
             {profile && (
-              <>
-                <span className="rounded-full px-3 py-1 text-sm font-semibold" style={{ backgroundColor: "#E5751F", color: "#1a1a1a" }}>
-                  {Number(profile.balance).toFixed(2)} Hokie Bucks
-                </span>
-                <button onClick={signOut} className="text-sm underline">{t("nav.signOut")}</button>
-              </>
+              <Link
+                href="/portfolio"
+                className="rounded-full border-2 px-3 py-1 text-sm font-semibold transition-transform duration-150 hover:scale-105 active:scale-95"
+                style={{ borderColor: dark ? "#E5751F" : "#861F41" }}
+              >
+                {t("nav.portfolio")}
+              </Link>
             )}
-            {!profile && !loading && (
-              <a href="/login" className="text-sm underline">{t("nav.signIn")}</a>
-            )}
-
             <button
               role="switch"
               aria-checked={trading}

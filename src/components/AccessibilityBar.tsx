@@ -1,13 +1,33 @@
 "use client";
 
-// Thin bar at the top of every page: skip link, High contrast switch, language picker.
+// Thin bar at the top of every page: skip link, High contrast switch, language picker,
+// and (on the right) sign in / sign out. It is on every page, so this is the one place
+// sign-in status is always reachable, no matter which page you are on.
 import { useEffect, useState } from "react";
 import { useT } from "@/lib/i18n";
 import { LANGS, type Lang } from "@/lib/translations";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AccessibilityBar() {
   const { lang, setLang, t } = useT();
   const [high, setHigh] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
+  const supabase = createClient();
+
+  // Check who is signed in now, and keep watching: this also catches sign-in/out that
+  // happens elsewhere (another tab, or the login page), so the button here stays correct.
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => setSignedIn(!!user));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSignedIn(!!session?.user);
+    });
+    return () => sub.subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function signOut() {
+    await supabase.auth.signOut();
+  }
 
   // Start in high contrast if the person chose it before, or if their device asks for more contrast.
   useEffect(() => {
@@ -37,27 +57,37 @@ export default function AccessibilityBar() {
       >
         {t("a11y.skip")}
       </a>
-      <div className="flex flex-wrap items-center justify-end gap-3 border-b border-gray-400 bg-gray-100 px-4 py-1 text-xs text-gray-900">
-        <button
-          type="button"
-          role="switch"
-          aria-checked={high}
-          onClick={toggle}
-          className="rounded border border-gray-700 px-2 py-0.5 font-semibold"
-        >
-          {t("a11y.contrast")}: {high ? t("on") : t("off")}
-        </button>
-        <label htmlFor="lang-select" className="font-medium">{t("a11y.language")}</label>
-        <select
-          id="lang-select"
-          value={lang}
-          onChange={(e) => setLang(e.target.value as Lang)}
-          className="rounded border border-gray-700 bg-white px-1 py-0.5"
-        >
-          {LANGS.map((l) => (
-            <option key={l.code} value={l.code} lang={l.code}>{l.label}</option>
-          ))}
-        </select>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-400 bg-gray-100 px-4 py-1 text-xs text-gray-900">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            role="switch"
+            aria-checked={high}
+            onClick={toggle}
+            className="rounded border border-gray-700 px-2 py-0.5 font-semibold"
+          >
+            {t("a11y.contrast")}: {high ? t("on") : t("off")}
+          </button>
+          <label htmlFor="lang-select" className="font-medium">{t("a11y.language")}</label>
+          <select
+            id="lang-select"
+            value={lang}
+            onChange={(e) => setLang(e.target.value as Lang)}
+            className="rounded border border-gray-700 bg-white px-1 py-0.5"
+          >
+            {LANGS.map((l) => (
+              <option key={l.code} value={l.code} lang={l.code}>{l.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {signedIn ? (
+          <button type="button" onClick={signOut} className="font-semibold underline">
+            {t("nav.signOut")}
+          </button>
+        ) : (
+          <a href="/login" className="font-semibold underline">{t("nav.signIn")}</a>
+        )}
       </div>
     </>
   );

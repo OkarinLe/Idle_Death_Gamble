@@ -4,7 +4,12 @@
 //   const { t } = useT();   t("nav.signIn")   t("full", { n: 80 })
 // The choice is saved in the browser (localStorage) and sets <html lang> for screen readers.
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { dictionaries, type Lang } from "./translations";
+import { dictionaries, LANGS, type Lang } from "./translations";
+
+const SUPPORTED_LANGS = LANGS.map((l) => l.code);
+function isSupportedLang(code: string): code is Lang {
+  return (SUPPORTED_LANGS as string[]).includes(code);
+}
 
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (key: string, vars?: Record<string, string | number>) => string };
 const LangContext = createContext<Ctx>({ lang: "en", setLang: () => {}, t: (k) => k });
@@ -18,7 +23,7 @@ export function LangProvider({ children }: { children: ReactNode }) {
     let saved: string | null = null;
     try { saved = localStorage.getItem("idg-lang"); } catch { /* storage blocked: fine */ }
     const guess = (saved ?? navigator.language ?? "en").slice(0, 2);
-    const next: Lang = guess === "es" || guess === "ko" ? guess : "en";
+    const next: Lang = isSupportedLang(guess) ? guess : "en";
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLangState(next);
   }, []);

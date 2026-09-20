@@ -140,12 +140,25 @@ export default function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
-      <header className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 p-4">
-        <div className="space-y-2">
-          <BackLink href="/" label="Back to campus info" />
-          <h1 className="text-2xl font-bold" style={{ color: "#E5751F" }}>Your portfolio</h1>
+      <header className="border-b border-gray-800 bg-black">
+        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-3 p-4">
+          <div className="space-y-2">
+            <BackLink href="/" label="Back to campus info" />
+            <h1
+              className="text-3xl font-extrabold tracking-tight sm:text-4xl"
+              style={{ color: "#E5751F", textShadow: "0 0 24px rgba(229, 117, 31, 0.35)" }}
+            >
+              Your portfolio
+            </h1>
+          </div>
+          <Link
+            href="/leaderboard"
+            className="rounded-full border-2 px-3 py-1 text-sm font-semibold transition-transform duration-150 hover:scale-105 active:scale-95"
+            style={{ borderColor: "#E5751F" }}
+          >
+            Leaderboard
+          </Link>
         </div>
-        <Link href="/leaderboard" className="text-sm underline">Leaderboard</Link>
       </header>
 
       <main id="main" className="mx-auto max-w-3xl space-y-4 p-4">
@@ -170,24 +183,44 @@ export default function PortfolioPage() {
 
         {!loading && signedIn && (
           <>
-            <dl className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <dl className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               {[
-                ["Balance", balance],
-                ["Open positions worth", positionsValue],
-                ["Net worth", balance + positionsValue],
-              ].map(([label, value], i) => (
-                <div
-                  key={label as string}
-                  className="animate-fade-up rounded-lg border border-gray-700 bg-gray-900 p-3"
-                  style={{ animationDelay: `${i * 60}ms` }}
-                >
-                  <dt className="text-xs uppercase tracking-wide text-gray-300">{label as string}</dt>
-                  <dd className="text-xl font-semibold">{money(value as number)} Hokie Bucks</dd>
-                </div>
-              ))}
+                ["Balance", balance, "💰"],
+                ["Open positions worth", positionsValue, "📈"],
+                ["Net worth", balance + positionsValue, "🏆"],
+              ].map(([label, value, icon], i) => {
+                const isNetWorth = label === "Net worth";
+                const card = (
+                  <div className={"h-full rounded-lg p-3" + (isNetWorth ? " bg-gray-900" : " border border-gray-700 bg-gray-900")}>
+                    <dt className="flex items-center gap-1.5 text-xs uppercase tracking-wide text-gray-300">
+                      <span aria-hidden="true">{icon}</span> {label as string}
+                    </dt>
+                    <dd className={isNetWorth ? "text-2xl font-bold" : "text-xl font-semibold"} style={isNetWorth ? { color: "#E5751F" } : undefined}>
+                      {money(value as number)} Hokie Bucks
+                    </dd>
+                  </div>
+                );
+                return (
+                  <div
+                    key={label as string}
+                    className={
+                      "animate-fade-up rounded-lg transition-transform duration-200 hover:-translate-y-1" +
+                      (isNetWorth ? " bg-gradient-to-r from-[#861F41] to-[#E5751F] p-[2px]" : "")
+                    }
+                    style={{ animationDelay: `${i * 60}ms` }}
+                  >
+                    {card}
+                  </div>
+                );
+              })}
             </dl>
 
-            <h2 className="pt-2 text-lg font-semibold">Open positions</h2>
+            <h2
+              className="mt-2 border-l-4 pl-3 text-lg font-semibold tracking-tight"
+              style={{ borderColor: "#E5751F" }}
+            >
+              Open positions
+            </h2>
             {openRows.length === 0 && (
               <p className="text-sm text-gray-300">
                 You do not own any shares yet. Go to the <Link href="/" className="underline">home page</Link>,
@@ -198,7 +231,7 @@ export default function PortfolioPage() {
             {openRows.map(({ p, m }, i) => (
               <section
                 key={m.id}
-                className="animate-fade-up rounded-lg border border-gray-700 bg-gray-900 p-4"
+                className="animate-fade-up rounded-lg border border-gray-700 bg-gray-900 p-4 transition-colors duration-150 hover:border-gray-500"
                 style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
               >
                 <h3 className="font-medium">{m.question}</h3>
@@ -278,11 +311,20 @@ export default function PortfolioPage() {
 
             {settledRows.length > 0 && (
               <>
-                <h2 className="pt-2 text-lg font-semibold">Finished markets</h2>
-                {settledRows.map(({ p, m }) => {
+                <h2
+                  className="mt-2 border-l-4 pl-3 text-lg font-semibold tracking-tight"
+                  style={{ borderColor: "#861F41" }}
+                >
+                  Finished markets
+                </h2>
+                {settledRows.map(({ p, m }, i) => {
                   const paid = m.outcome ? owned(p, m.outcome) : 0;
                   return (
-                    <section key={m.id} className="rounded-lg border border-gray-700 bg-gray-900 p-4">
+                    <section
+                      key={m.id}
+                      className="animate-fade-up rounded-lg border border-gray-700 bg-gray-900 p-4"
+                      style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}
+                    >
                       <h3 className="font-medium">{m.question}</h3>
                       <p className="text-xs text-gray-300">{m.ticker}</p>
                       <p className="mt-2 text-sm">

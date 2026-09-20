@@ -6,24 +6,30 @@
 export type ChartPoint = { t: number; y: number }; // t = time in ms, y = Yes price from 0 to 1
 
 export default function PriceChart({ points }: { points: ChartPoint[] }) {
-  if (points.length < 2) {
-    return <p className="mt-2 text-xs opacity-70">The price chart appears after the first trade.</p>;
+  if (points.length === 0) {
+    return <p className="mt-2 text-xs opacity-70">No price data yet.</p>;
   }
+
+  // Before the first trade there is only the starting point (see loadHistory in page.tsx).
+  // Give it a second, identical-price point so the chart still draws a (flat) line spanning
+  // the full width instead of waiting for a trade. The exact time does not matter here, only
+  // that it differs from the first point, so this stays a pure calculation (no Date.now()).
+  const series = points.length === 1 ? [points[0], { t: points[0].t + 1, y: points[0].y }] : points;
 
   const W = 300;
   const H = 72;
   const PAD = 4;
-  const t0 = points[0].t;
-  const span = Math.max(1, points[points.length - 1].t - t0);
+  const t0 = series[0].t;
+  const span = Math.max(1, series[series.length - 1].t - t0);
   const x = (t: number) => PAD + ((t - t0) / span) * (W - 2 * PAD);
   const y = (p: number) => PAD + (1 - p) * (H - 2 * PAD);
 
-  const path = points.map((p) => `${x(p.t).toFixed(1)},${y(p.y).toFixed(1)}`).join(" ");
-  const first = Math.round(points[0].y * 100);
-  const last = Math.round(points[points.length - 1].y * 100);
+  const path = series.map((p) => `${x(p.t).toFixed(1)},${y(p.y).toFixed(1)}`).join(" ");
+  const first = Math.round(series[0].y * 100);
+  const last = Math.round(series[series.length - 1].y * 100);
   const change = last - first;
-  const high = Math.round(Math.max(...points.map((p) => p.y)) * 100);
-  const low = Math.round(Math.min(...points.map((p) => p.y)) * 100);
+  const high = Math.round(Math.max(...series.map((p) => p.y)) * 100);
+  const low = Math.round(Math.min(...series.map((p) => p.y)) * 100);
   const trend = change > 0 ? `▲ up ${change}` : change < 0 ? `▼ down ${-change}` : "no change";
 
   return (

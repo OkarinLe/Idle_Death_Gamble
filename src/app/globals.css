@@ -82,6 +82,7 @@ body {
 html[data-contrast="high"] body,
 html[data-contrast="high"] body * {
   background-color: #000 !important;
+  background-image: none !important; /* kills brand-color gradients (e.g. the title underline) too */
   color: #fff !important;
   border-color: #fff !important;
   text-shadow: none !important;
