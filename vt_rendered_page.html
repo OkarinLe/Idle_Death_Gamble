@@ -1,0 +1,900 @@
+<!DOCTYPE html><html lang="en-US" data-date="" style="" class=" js flexbox flexboxlegacy canvas canvastext webgl no-touch geolocation postmessage no-websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths"><head>
+    <link rel="icon" href="Themes/favicon/Virginia-Tech-Logo-PNG-Image1.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Facility Occupancy - VT RecSports</title>
+
+    
+    
+        <script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js" nonce=""></script><script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=G-FLH74NEY8Z&amp;cx=c&amp;gtm=4e69g1" nonce=""></script><script nonce="">
+        window.DevExpress = window.DevExpress || {};
+        window.DevExpress.config = {
+            licenseKey: 'ewogICJmb3JtYXQiOiAxLAogICJjdXN0b21lcklkIjogIjFhYTRjMGE2LTI0ZGQtNGYzNS04YWZkLTI2NTA1M2MxZjc4MyIsCiAgIm1heFZlcnNpb25BbGxvd2VkIjogMjQyCn0=.UvXTrzcD+hX391eXIpVHuoc0dOVfuyiP7NpyIOMNR0ECfB17BU20O+Fb39buerr9XlXGh36CGxDlKeRCHP9HW25CmyIMVnI8zAps7QD1TSjTSHFBQUf/DBX5ObHA5xlSnbrUOA=='
+        };
+        </script>
+
+    <script type="text/javascript" src="/bundles/jquery?v=PRKzFb9CosvCBfC4s8J1b61Lsj97nm4lPjMlczW-jXs1" nonce=""></script>
+
+
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.2.3/css/dx.light.css">
+    <script src="https://cdn3.devexpress.com/jslib/24.2.3/js/dx.all.js" nonce=""></script>
+
+    
+
+    <script nonce="">
+        DevExpress.localization.locale("en-US");
+    </script>
+
+
+    <link href="/Content/custom/custom.css" rel="stylesheet" type="text/css">
+    <link href="/bundles/css?v=yIb-3uQUjsNIkSVwJo9hijTq3jvFLh2rhnu2xSggaEk1" rel="stylesheet">
+
+    
+    <script type="text/javascript" src="/bundles/modernizr?v=inCVuEFe6J4Q07A0AcRsbJic_UE5MwpRMNGcOtk94TE1" nonce=""></script>
+
+    <script type="text/javascript" src="/bundles/bootstrap?v=-UU6ZNj8_0E9z7QawhC4UciNIEdjaGSW3CgoG06m_Ss1" nonce=""></script>
+
+    <script type="text/javascript" src="/bundles/innosoft?v=nM8HlNEQ-sSafV6NLAUq2tFAJiZT3jjk9rDoNGtE2Lc1" nonce=""></script>
+
+    <script type="text/javascript" src="/bundles/signalR?v=UHTi4JWLFgaeIF35j3FxUxFxpohfwADMDmZABKPNoxw1" nonce=""></script>
+
+    <script type="text/javascript" src="/Scripts/bootstrap.bundle.min.js" nonce=""></script>
+
+
+    
+	<link href="/Content/InnoSoftTabs?v=eAXIZn6IOtOwapSow0rjbDTgbe7kSxSQaCdYMlDfrYE1" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" href="/Content/InnoSoftFacilityOccupancy.css?v=0812183148">
+	<script nonce="" src="/Scripts/Chart.js"></script>
+	<script type="text/javascript" nonce="" src="/Scripts/InnosoftFacilityOccupancy.js?v=0812183148"></script>
+
+    <script nonce="">
+        function AttachEventsToElement(id, eventType, listener) {
+            var elementToAttachTo = document.getElementById(id);
+            if (elementToAttachTo != null) {
+                elementToAttachTo.addEventListener(eventType, function (e) {
+                    if (this.getAttribute('aria-disabled') === 'true') {
+                        e.preventDefault();
+                        return;
+                    }
+                    listener.call(this, e);
+                });
+            }
+        }
+
+        // Global resources loaded from server-side cache (culture-aware)
+        window.GlobalResources = {"AccessibilitySettings_AltTextBlank":"The alt text is blank","AccessibilitySettings_AltTextConfigured":"Alt Text Configured","AccessibilitySettings_FilterRemoved":"filter removed","AccessibilitySettings_FiltersApplied":"Filters have been applied.","AccessibilitySettings_FiltersReset":"Filters have been reset.","AccessibilitySettings_NewsItems":"News Items","AccessibilitySettings_PaymentTypes":"Payment Types","AccountLogin_UsernamePasswordNotBeEmpty":"Username or Password can not be empty!","BookingCancellation_LoadingText":"Cancelling...","BookingDateSelector_NextDates":"Next dates","BookingDateSelector_NextDatesLoaded":"Next dates shown","BookingDateSelector_PreviousDates":"Previous dates","BookingDateSelector_PreviousDatesLoaded":"Previous dates shown","BookingProductDetails_Slot_BookNow":"Book Now","BookingSlot_BookingText":"Booking...","Cart_ProcessingPayment":"Processing Payment...","Cart_RefreshingCart":"Refreshing cart...","Dependants_Register":"Register","Dependants_Register_Tooltip":"Family member selection required","DependantsPartial_UpdateWaitlist":"Update Waitlist","Facility_Occupancy_Edit":"Actions available after count change","FusionAgent_EventStillRunning":"Event(s) are still running.","FusionAgent_ExportTaskSubmitted":"CBORD File Export task submitted!","FusionAgent_RunningEventNotVerify":"Cannot verify that agent is running.","FusionAgent_RunningSuccess":"Accrual Will run momentarily!","Global_AllDay":"All Day","Global_AlreadyAdded":"Already Added","Global_Confirm":"Confirm","Global_Error":"Error","Global_InvalidRequest":"Invalid request","Global_Loading":"Loading","Global_Max":"Max","Global_Next":"Next","Global_NotSupplied":"Not Supplied","Global_NoUpcomingEvents":"You have no upcoming events.","Global_Online":"Online","Global_Previous":"Previous","Global_Remove":"Remove","Global_Selected":"Selected","Global_ServerError":"Server error:","Global_SomethingWentWrong":"Something went wrong!","Global_Submit":"Submit","GroupRegistration_RegistrantImgAltText":"Image for","InvoiceDetail_InvoiceTotal":"Invoice Total","Layout_Loading":"Loading...","MemberRegistration_NumOfUpcoming":"You have {0} upcoming events.","Membership_Service_Duration":"Select at least one Service Duration","Notification_CheckInError_UnableToCheckIn":"Unable to check user in","PaymentProvider_InProduction":"In Production","PaymentProvider_InTest":"In Test","Profile":"Profile","Profile_FailedToLoadAddress":"Failed to load address information. Please refresh.","Profile_FailedToLoadEmailInformation":"Failed to load email information. Please refresh.","Profile_FailedToLoadNumber":"Failed to load phone number information. Please refresh.","Profile_RegistrationCanceled":"Registration has been successfully canceled.","Profile_RemovedFromWaitlist":"Successfully removed from waitlist.","Profile_UnableToAddGender":"We were unable to add gender information. (Validation: Field cannot be empty)","Profile_UnableToSaveChanges":"We were unable to save your changes. If this problem persists please contact an admin.","Profile_UpdatedFamily":"We successfully updated your family.","ReCaptcha_Confirming":"Confirming...","Registration_Step_Payment_Option":"Select Payment Option","Registration_Step_Payment_Waivers":"Accept Waivers","Stripe_PaymentNotSuccessful":"Your payment was not successful, please try again.","Stripe_PaymentProcessing":"Your payment is processing.","Stripe_PaymentSucceeded":"Payment succeeded!","User_Login_Credentials":"Enter your login credentials","WaiverPage_ExpandWaiver":"Expand Waiver","WaiverPage_MinimizeWaiver":"Minimize Waiver"};
+
+        // Date format for DevExtreme datepickers (culture-aware)
+        window.InnosoftDateFormat = 'E, MMM d yyyy';
+        window.InnosoftDateTimeFormat = 'E, MMM d yyyy h:mm a';
+
+        /**
+         * Extracts a localized resource value from page-level or global resources.
+         * param {string} key - The resource key to look up (e.g., "Global_Loading")
+         * returns {string} The localized string, or "[Missing: key]" if not found
+         **/
+        window.extractResourceValue = function (key) {
+            // 1. Check page-level resource first
+            if (typeof PageResources !== "undefined" && key in PageResources) {
+                return PageResources[key];
+            }
+
+            // 2. Then global resources
+            if (typeof GlobalResources !== "undefined" && key in GlobalResources) {
+                return GlobalResources[key];
+            }
+
+            return "[Missing: " + key + "]";
+        };
+
+    </script>
+
+            <link href="/Themes/activetheme.css?v=0910105656" rel="stylesheet" type="text/css">
+
+
+    <script type="text/javascript" src="/Scripts/spin.min.js" nonce=""></script><style type="text/css"></style>
+
+        <script nonce="" async="" src="https://www.googletagmanager.com/gtag/js?id=UA-83223077-2"></script>
+        <script nonce="">
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+			gtag('config', 'UA-83223077-2', { 'cookie_flags': 'SameSite=None;Secure'});
+        </script>
+
+
+
+        <script type="text/javascript" src="/Scripts/flushTokensFromLocalStorage.js" nonce=""></script>
+
+
+</head>
+
+<body>
+    <div class="wrapper">
+
+<nav id="sidebar" tabindex="-1" class="" aria-hidden="true" aria-label="Site Navigation">
+	<div id="sidebarHeader" class="TopBarBG">
+        <div class="d-flex align-items-center h-100">
+            <div id="sidebarDismiss" aria-label="Close" class="SideBarMenuLink SideBarMenuLinkColor" tabindex="-1" role="button">
+                <span class="material-icons-round md-24" aria-hidden="true">clear</span>
+            </div>
+            <script nonce="" type="text/javascript"> AttachEventsToElement('sidebarDismiss', 'keydown', function(){enterToClick(event)}); 
+</script>
+
+    <div>
+        <a href="/" class="LogoLink" id="sidebarLogo" aria-label="Home" tabindex="-1"></a>
+    </div>
+
+        </div>
+	</div>
+
+	<div id="sidebarBody" class="overflow-auto pb-4 ScrollSmall">
+		<div class="list-unstyled list-group components">
+					<a class="sidebarMenuItem list-group-item-action" href="https://apps.students.vt.edu/rshours/#/" target="_blank" tabindex="-1">
+						<div class="d-inline-flex">
+							<span class="material-icons-round" aria-hidden="true">timer</span>
+							<span class="sidebarText">Facility Hours</span>
+						</div>
+					</a>
+					<a class="sidebarMenuItem list-group-item-action" href="../Membership/Index" target="_self" tabindex="-1">
+						<div class="d-inline-flex">
+							<span class="material-icons-round" aria-hidden="true">account_box</span>
+							<span class="sidebarText">Memberships</span>
+						</div>
+					</a>
+					<a class="sidebarMenuItem list-group-item-action" href="https://connect.recsports.vt.edu/booking" target="_self" tabindex="-1">
+						<div class="d-inline-flex">
+							<span class="material-icons-round" aria-hidden="true">person_add</span>
+							<span class="sidebarText">Group Exercise Pre-Registration</span>
+						</div>
+					</a>
+					<a class="sidebarMenuItem list-group-item-action" href="/Program/GetProducts?productTypeCV=00000000-0000-0000-0000-000000003502&amp;classification=7a38b10b-a76c-4d17-9b59-0435be7e5e11" target="_self" tabindex="-1">
+						<div class="d-inline-flex">
+							<span class="material-icons-round" aria-hidden="true">celebration</span>
+							<span class="sidebarText">Special Events</span>
+						</div>
+					</a>
+					<a class="sidebarMenuItem list-group-item-action" href="../Program/GetProducts?productTypeCV=00000000-0000-0000-0000-000000003502&amp;classification=0c69b1c8-0854-4d0c-8eb1-7b988a40a714" target="_self" tabindex="-1">
+						<div class="d-inline-flex">
+							<span class="material-icons-round" aria-hidden="true">hiking</span>
+							<span class="sidebarText">Venture Out</span>
+						</div>
+					</a>
+					<a class="sidebarMenuItem list-group-item-action" href="../Membership/Index" target="_self" tabindex="-1">
+						<div class="d-inline-flex">
+							<span class="material-icons-round" aria-hidden="true">golf_course</span>
+							<span class="sidebarText">VT Golf Course Membership</span>
+						</div>
+					</a>
+					<a class="sidebarMenuItem list-group-item-action" href="../MultiVisitPass/GetProducts?productTypeCV=00000000-0000-0000-0000-000000003772" target="_self" tabindex="-1">
+						<div class="d-inline-flex">
+							<span class="material-icons-round" aria-hidden="true">fitness_center</span>
+							<span class="sidebarText">Personal Training &amp; Fitness Assessment</span>
+						</div>
+					</a>
+					<a class="sidebarMenuItem list-group-item-action" href="../app/equipment-rentals" target="_self" tabindex="-1">
+						<div class="d-inline-flex">
+							<span class="material-icons-round" aria-hidden="true">landscape</span>
+							<span class="sidebarText">Equipment Rentals</span>
+						</div>
+					</a>
+					<a class="sidebarMenuItem list-group-item-action" href="https://connect.recsports.vt.edu/Program/GetProducts?classification=b1ea343b-5316-480e-ba67-97ff8360f29f" target="_self" tabindex="-1">
+						<div class="d-inline-flex">
+							<span class="material-icons-round" aria-hidden="true">health_and_safety</span>
+							<span class="sidebarText">Certification Courses</span>
+						</div>
+					</a>
+					</div>
+	</div>
+</nav>
+
+<script nonce="">
+    var keys = {
+        tab: 9,
+        esc: 27,
+        space: 32
+	};
+
+	$(document).ready(function () {
+		$('#sidebarDismiss, .overlay').on('click', function () {
+			dismissSidebar();
+		});
+
+		$('#sidebarCollapse').on('click', function () {
+			showSidebar();
+		});
+
+		$('#sidebarCollapse').on('keydown', function (event) {
+			if (event.keyCode === keys.space) {
+				event.preventDefault();
+				showSidebar();
+			}
+		});
+
+		$('#sidebarDismiss').on('keydown', function (event) {
+			if (event.keyCode === keys.space) {
+				event.preventDefault();
+				dismissSidebar();
+			}
+		});
+
+        $('#sidebarDismiss, #sidebarLogo, .sidebarMenuItem').on("keydown", function (event) {
+            switch (event.keyCode) {
+                case keys.esc:
+                    dismissSidebar()
+                    break;
+            }
+		});
+
+        $(".sidebarMenuItem:last-of-type").on("keydown", function (event) {
+            if (event.keyCode === keys.tab) {
+                event.preventDefault();
+                $('#sidebarDismiss').focus();
+            }
+		});
+
+        $('.sidebarMenuItem').attr('tabindex', '-1');
+	});
+
+	function dismissSidebar() {
+		// hide sidebar
+		$('#sidebar').removeClass('active');
+        $('#sidebar').attr('aria-hidden','true')
+		$('#sidebarCollapse').attr('aria-expanded', 'false').focus();
+
+		if (typeof nvdaAnnounce === 'function')
+			nvdaAnnounce($('#sidebarCollapse').attr('aria-label') + ' collapsed');
+
+		// hide overlay
+		$('.overlay').removeClass('active');
+		$('.sideBarSubMenu.show').toggleClass('show');
+
+		$('html').removeClass("overflow-hidden");
+		$('#sidebarDismiss').attr('tabindex', '-1');
+		$('#sidebarLogo').attr('tabindex', '-1');
+		$('.sidebarMenuItem').attr('tabindex', '-1');
+	}
+
+	function showSidebar() {
+		// open sidebar
+		$('#sidebar').addClass('active');
+        $('#sidebar').attr('aria-hidden', 'false')
+		$('#sidebarCollapse').attr('aria-expanded', 'true');
+
+		if (typeof nvdaAnnounce === 'function')
+			nvdaAnnounce($('#sidebarCollapse').attr('aria-label') + ' expanded');
+		// fade in the overlay
+		$('.overlay').addClass('active');
+		$('a[aria-expanded=true]').attr('aria-expanded', 'false');
+		$(".sidebarMenuItem").first().focus();
+
+		$('html').addClass("overflow-hidden");
+		$('#sidebarDismiss').attr('tabindex', '0');
+		$('#sidebarLogo').attr('tabindex', '0');
+        $(".sidebarMenuItem").attr('tabindex', '0');
+	}   
+</script>
+
+
+        <div id="content">
+
+<div id="SessionTimeoutContainer">
+    <input hidden="" value="20" id="SessionTimeoutMins">
+</div>
+
+
+<div class="modal fade" id="inactivityIdleWarning" tabindex="-1" aria-labelledby="inactivityTimeoutWarning" aria-hidden="true" data-backdrop="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title global-Modal-Header-H5-FontSize" id="inactivityTimeoutWarning">Are you still there?</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Would you like to continue? Your session will expire in 2 mins due to inactivity.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary resetInactivityModalBtn">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script nonce="" type="text/javascript">
+    $(".resetInactivityModalBtn").on('click', function () {
+        resetSessionAuthentication();
+    });
+</script>
+
+            <div class="navbar TopBar navbar-expand sticky-top TopBarBG" role="banner">
+                <div class="container-fluid">
+                    <div class="d-flex align-items-center h-100">
+                        <div id="sidebarCollapse" class="SideBarMenuLink SideBarMenuLinkColor" aria-expanded="false" aria-controls="sidebar" aria-label="Open Site Navigation" tabindex="0" role="button">
+                            <span class="material-icons-round" aria-hidden="true">menu</span>
+                        </div>
+                        <script nonce="" type="text/javascript"> AttachEventsToElement('sidebarCollapse', 'keydown', function(){enterToClick(event)}); 
+</script>
+
+    <div>
+        <a href="/" class="LogoLink" id="LogoBackground" aria-label="Home" tabindex="0"></a>
+    </div>
+
+                    </div>
+                    <div id="Search" class="d-none d-lg-block TopSearch">
+
+                    </div>
+
+                    <div id="TopBarRight" class="d-flex align-items-center h-100">
+                        <div class="d-lg-none">
+                            <a id="lnkSearch" href="#SearchCl" data-bs-toggle="collapse" aria-label="Search" class="btn btn-link SearchButton TopBarButtonColor" aria-expanded="false" aria-controls="SearchCl">
+                                <span class="material-icons-round" aria-hidden="true">search</span>
+                            </a>
+                        </div>
+                        
+    <a class="TopBarButtonColor LoginPartialLinks btn btn-link" href="/account/signin?returnUrl=%252ffacilityoccupancy">Sign In</a>
+
+
+                    </div>
+                </div>
+            </div>
+
+
+<div class="container-fluid HeaderBar HeaderBarBg">
+    <a id="skipLink" class="skip-main" href="#mainContent">Skip to main content</a>
+    <div id="ecHeader" class="editableCustomContent row" data-id="00000000-0000-0000-0000-000000004189">
+        <div class="container">
+<div class="row">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+<h2 class="head-title">Recreational Sports Portal</h2>
+</div>
+</div>
+</div>
+    </div>
+</div>
+
+            <div class="collapse" id="SearchCl" role="search">
+<form action="/Program/Search" aria-label="Main" id="SearchFormXS" method="post" role="search"><input name="__RequestVerificationToken" type="hidden" value="V7C0HwgTWzRYDJqBI23v91u12_yPEcvcLgh-NILqip2YBNyDyzjW_TAqhsr7yDYxulfYMAat8JX1wOHPhK4oRvJ4ajtA3djVukmhVI9j2Js1"><div class="input-group">
+    <input type="text" id="txtSearchClId" name="term" class="form-control" aria-label="Search Programs" placeholder="Search Programs" required="">
+    <script nonce="" type="text/javascript"> AttachEventsToElement('txtSearchClId', 'search', function(){SearchKeyXS(event)}); 
+</script>
+    <button id="btnSearchSm" class="btn btn-outline-secondary SearchButtonColor" type="submit" aria-label="Submit Search"><span class="material-icons-round" aria-hidden="true">search</span></button>
+</div></form>            </div>
+
+
+
+            <div id="main" role="main">
+                
+
+
+                <div class="container body-content bodyColour contentWrapPP" id="mainContent">
+                    <div id="cookieArea"><div id="gdpr-cookie-message" style=""><h4>Cookies &amp; Privacy</h4><p>This website uses cookies to ensure you get the best experience on our website. <a href="/Home/Privacy">More information</a></p><div id="gdpr-cookie-types" style="display:none;"><h5>Select cookies to accept</h5><ul><li><input type="checkbox" name="gdpr[]" value="necessary" checked="checked" disabled="disabled"> <label title="These are cookies that are essential for the website to work correctly.">Necessary</label></li></ul></div><p><button id="gdpr-cookie-accept" type="button">Acknowledge Cookies</button><button id="gdpr-cookie-advanced" type="button">Customise Cookies</button></p></div></div>
+                    <div>
+
+
+                        
+
+
+
+
+
+
+<div class="d-flex justify-content-between mb-3">
+	<div>
+		<div class="alert alert-danger results-not-live" role="alert" hidden="hidden">Sorry, something went wrong while loading the facility occupancy results. Please try again soon!</div>
+		<h1 class="text-primary">Facility Occupancy</h1>
+
+		<div id="results-live" class="live-occupancy-mode" role="status" aria-live="polite"><span class="fa fa-circle text-danger blink" aria-hidden="true"></span>&nbsp; Live Results</div>
+		<div class="results-not-live live-occupancy-mode" hidden="hidden"><span class="fa fa-circle text-danger" aria-hidden="true"></span>&nbsp; Showing results from <span id="last-update">8:59 PM</span></div>
+		<div class="edit-occupancy-mode" style="display:none;">Edit Live Results</div>
+	</div>
+</div>
+
+<input id="occupancy-display-type" name="OccupancyDisplay" type="hidden" value="00000000-0000-0000-0000-000000004490">
+
+<div class="d-flex row row-cols-1 row-cols-md-2 row-cols-xl-3 occupancy-card-container">
+		<div class="col" id="facility-55069633-b56e-43b7-a68a-64d79364988d" data-facilityid="55069633-b56e-43b7-a68a-64d79364988d">
+<div class="occupancy-card">
+    <div class="occupancy-card-header">
+		<div class="occupancy-card-header-line-1">
+			<div style="margin-top: 4px;">
+				<h2><strong>WMH Service Desk</strong></h2>
+			</div>
+		</div>
+
+        <div id="55069633-b56e-43b7-a68a-64d79364988d-tabs" class="material-tabs" role="tablist">
+            <button type="button" id="tabs-occupancy-55069633-b56e-43b7-a68a-64d79364988d" data-tab="occupancy-55069633-b56e-43b7-a68a-64d79364988d" class="active" role="tab" aria-selected="true" aria-controls="occupancy-55069633-b56e-43b7-a68a-64d79364988d" aria-label="WMH Service Desk Occupancy">
+                <span class="text-primary">Occupancy</span>
+            </button>
+            <button type="button" id="tabs-detail-55069633-b56e-43b7-a68a-64d79364988d" data-tab="details-55069633-b56e-43b7-a68a-64d79364988d" role="tab" aria-selected="false" aria-controls="details-55069633-b56e-43b7-a68a-64d79364988d" aria-label="WMH Service Desk Facility Details">
+                <span class="text-primary">Details</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="occupancy-card-body">
+        <div id="occupancy-55069633-b56e-43b7-a68a-64d79364988d" class="material-tab-panel tab-55069633-b56e-43b7-a68a-64d79364988d" role="tabpanel" aria-labelledby="tabs-occupancy-55069633-b56e-43b7-a68a-64d79364988d">
+            <div class="d-none d-md-flex justify-content-center">
+                <div class="occupancy-chart-container" style="position: relative; height:160px; width:160px;">
+                    <canvas id="occupancyChart-55069633-b56e-43b7-a68a-64d79364988d" class="occupancy-chart" data-ratio="0.54" data-occupancy="651" data-remaining="549" width="160" height="160" aria-labelledby="chartDesc-55069633-b56e-43b7-a68a-64d79364988d" role="img" style="display: block; box-sizing: border-box; height: 160px; width: 160px;"></canvas>
+                </div>
+                    <span id="chartDesc-55069633-b56e-43b7-a68a-64d79364988d" class="visually-hidden">
+                        Max Occupancy: 1200, Current Occupancy: 54%
+                    </span>
+            </div>
+            <div class="d-md-none d-flex flex-column">
+                <div class="occupany-chart-wrapper-sm">
+                    <div class="occupancy-chart-container">
+                        <canvas id="occupancyChart-55069633-b56e-43b7-a68a-64d79364988d-sm" class="occupancy-chart" data-ratio="0.54" data-occupancy="651" data-remaining="549" width="0" height="0" aria-labelledby="chartDesc-55069633-b56e-43b7-a68a-64d79364988d-sm" role="img" style="display: block; box-sizing: border-box; height: 0px; width: 0px;"></canvas>
+                    </div>
+                </div>
+                    <span id="chartDesc-55069633-b56e-43b7-a68a-64d79364988d-sm" class="visually-hidden">
+                        Max Occupancy: 1200, Current Occupancy: 54%
+                    </span>
+            </div>
+        </div>
+
+        <div id="details-55069633-b56e-43b7-a68a-64d79364988d" class="material-tab-panel tab-55069633-b56e-43b7-a68a-64d79364988d" role="tabpanel" aria-labelledby="tabs-detail-55069633-b56e-43b7-a68a-64d79364988d" style="display:none">
+            <p class="occupancy-text">This number is only as accurate as our swipe data. Please make
+ sure that you are swiping in and out when visiting War.</p>
+        </div>
+    </div>
+</div>
+
+<script nonce="">
+    $(document).ready(function () {
+        $('#55069633-b56e-43b7-a68a-64d79364988d-tabs button').click(function (e) {
+
+		    e.preventDefault();
+		    $('#55069633-b56e-43b7-a68a-64d79364988d-tabs button').removeClass('active').attr('aria-selected', 'false');
+            $(this).addClass('active').attr('aria-selected', 'true');
+            let tabId = $(this).data('tab');
+
+            $('.tab-55069633-b56e-43b7-a68a-64d79364988d').hide();
+            $('#' + tabId).show();
+        });
+});
+</script>
+</div>
+		<div class="col" id="facility-232d714e-5b3e-4b0d-9936-e6a738150ec4" data-facilityid="232d714e-5b3e-4b0d-9936-e6a738150ec4">
+<div class="occupancy-card">
+    <div class="occupancy-card-header">
+		<div class="occupancy-card-header-line-1">
+			<div style="margin-top: 4px;">
+				<h2><strong>McComas Hall</strong></h2>
+			</div>
+		</div>
+
+        <div id="232d714e-5b3e-4b0d-9936-e6a738150ec4-tabs" class="material-tabs" role="tablist">
+            <button type="button" id="tabs-occupancy-232d714e-5b3e-4b0d-9936-e6a738150ec4" data-tab="occupancy-232d714e-5b3e-4b0d-9936-e6a738150ec4" class="active" role="tab" aria-selected="true" aria-controls="occupancy-232d714e-5b3e-4b0d-9936-e6a738150ec4" aria-label="McComas Hall Occupancy">
+                <span class="text-primary">Occupancy</span>
+            </button>
+            <button type="button" id="tabs-detail-232d714e-5b3e-4b0d-9936-e6a738150ec4" data-tab="details-232d714e-5b3e-4b0d-9936-e6a738150ec4" role="tab" aria-selected="false" aria-controls="details-232d714e-5b3e-4b0d-9936-e6a738150ec4" aria-label="McComas Hall Facility Details">
+                <span class="text-primary">Details</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="occupancy-card-body">
+        <div id="occupancy-232d714e-5b3e-4b0d-9936-e6a738150ec4" class="material-tab-panel tab-232d714e-5b3e-4b0d-9936-e6a738150ec4" role="tabpanel" aria-labelledby="tabs-occupancy-232d714e-5b3e-4b0d-9936-e6a738150ec4">
+            <div class="d-none d-md-flex justify-content-center">
+                <div class="occupancy-chart-container" style="position: relative; height:160px; width:160px;">
+                    <canvas id="occupancyChart-232d714e-5b3e-4b0d-9936-e6a738150ec4" class="occupancy-chart" data-ratio="0" data-occupancy="0" data-remaining="600" width="160" height="160" aria-labelledby="chartDesc-232d714e-5b3e-4b0d-9936-e6a738150ec4" role="img" style="display: block; box-sizing: border-box; height: 160px; width: 160px;"></canvas>
+                </div>
+                    <span id="chartDesc-232d714e-5b3e-4b0d-9936-e6a738150ec4" class="visually-hidden">
+                        Max Occupancy: 600, Current Occupancy: 0%
+                    </span>
+            </div>
+            <div class="d-md-none d-flex flex-column">
+                <div class="occupany-chart-wrapper-sm">
+                    <div class="occupancy-chart-container">
+                        <canvas id="occupancyChart-232d714e-5b3e-4b0d-9936-e6a738150ec4-sm" class="occupancy-chart" data-ratio="0" data-occupancy="0" data-remaining="600" width="0" height="0" aria-labelledby="chartDesc-232d714e-5b3e-4b0d-9936-e6a738150ec4-sm" role="img" style="display: block; box-sizing: border-box; height: 0px; width: 0px;"></canvas>
+                    </div>
+                </div>
+                    <span id="chartDesc-232d714e-5b3e-4b0d-9936-e6a738150ec4-sm" class="visually-hidden">
+                        Max Occupancy: 600, Current Occupancy: 0%
+                    </span>
+            </div>
+        </div>
+
+        <div id="details-232d714e-5b3e-4b0d-9936-e6a738150ec4" class="material-tab-panel tab-232d714e-5b3e-4b0d-9936-e6a738150ec4" role="tabpanel" aria-labelledby="tabs-detail-232d714e-5b3e-4b0d-9936-e6a738150ec4" style="display:none">
+            <p class="occupancy-text">This number is only as accurate as our swipe data. Please make
+ sure that you are swiping in and out when visiting War.</p>
+        </div>
+    </div>
+</div>
+
+<script nonce="">
+    $(document).ready(function () {
+        $('#232d714e-5b3e-4b0d-9936-e6a738150ec4-tabs button').click(function (e) {
+
+		    e.preventDefault();
+		    $('#232d714e-5b3e-4b0d-9936-e6a738150ec4-tabs button').removeClass('active').attr('aria-selected', 'false');
+            $(this).addClass('active').attr('aria-selected', 'true');
+            let tabId = $(this).data('tab');
+
+            $('.tab-232d714e-5b3e-4b0d-9936-e6a738150ec4').hide();
+            $('#' + tabId).show();
+        });
+});
+</script>
+</div>
+		<div class="col" id="facility-288545f0-eaf6-454b-8ce4-ff74e7f30939" data-facilityid="288545f0-eaf6-454b-8ce4-ff74e7f30939">
+<div class="occupancy-card">
+    <div class="occupancy-card-header">
+		<div class="occupancy-card-header-line-1">
+			<div style="margin-top: 4px;">
+				<h2><strong>Esports</strong></h2>
+			</div>
+		</div>
+
+        <div id="288545f0-eaf6-454b-8ce4-ff74e7f30939-tabs" class="material-tabs" role="tablist">
+            <button type="button" id="tabs-occupancy-288545f0-eaf6-454b-8ce4-ff74e7f30939" data-tab="occupancy-288545f0-eaf6-454b-8ce4-ff74e7f30939" class="" role="tab" aria-selected="false" aria-controls="occupancy-288545f0-eaf6-454b-8ce4-ff74e7f30939" aria-label="Esports Occupancy">
+                <span class="text-primary">Occupancy</span>
+            </button>
+            <button type="button" id="tabs-detail-288545f0-eaf6-454b-8ce4-ff74e7f30939" data-tab="details-288545f0-eaf6-454b-8ce4-ff74e7f30939" role="tab" aria-selected="true" aria-controls="details-288545f0-eaf6-454b-8ce4-ff74e7f30939" aria-label="Esports Facility Details" class="active">
+                <span class="text-primary">Details</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="occupancy-card-body">
+        <div id="occupancy-288545f0-eaf6-454b-8ce4-ff74e7f30939" class="material-tab-panel tab-288545f0-eaf6-454b-8ce4-ff74e7f30939" role="tabpanel" aria-labelledby="tabs-occupancy-288545f0-eaf6-454b-8ce4-ff74e7f30939" style="display: none;">
+            <div class="d-none d-md-flex justify-content-center">
+                <div class="occupancy-chart-container" style="position: relative; height:160px; width:160px;">
+                    <canvas id="occupancyChart-288545f0-eaf6-454b-8ce4-ff74e7f30939" class="occupancy-chart" data-ratio="0.27" data-occupancy="15" data-remaining="40" width="160" height="160" aria-labelledby="chartDesc-288545f0-eaf6-454b-8ce4-ff74e7f30939" role="img" style="display: block; box-sizing: border-box; height: 160px; width: 160px;"></canvas>
+                </div>
+                    <span id="chartDesc-288545f0-eaf6-454b-8ce4-ff74e7f30939" class="visually-hidden">
+                        Max Occupancy: 55, Current Occupancy: 27%
+                    </span>
+            </div>
+            <div class="d-md-none d-flex flex-column">
+                <div class="occupany-chart-wrapper-sm">
+                    <div class="occupancy-chart-container">
+                        <canvas id="occupancyChart-288545f0-eaf6-454b-8ce4-ff74e7f30939-sm" class="occupancy-chart" data-ratio="0.27" data-occupancy="15" data-remaining="40" width="0" height="0" aria-labelledby="chartDesc-288545f0-eaf6-454b-8ce4-ff74e7f30939-sm" role="img" style="display: block; box-sizing: border-box; height: 0px; width: 0px;"></canvas>
+                    </div>
+                </div>
+                    <span id="chartDesc-288545f0-eaf6-454b-8ce4-ff74e7f30939-sm" class="visually-hidden">
+                        Max Occupancy: 55, Current Occupancy: 27%
+                    </span>
+            </div>
+        </div>
+
+        <div id="details-288545f0-eaf6-454b-8ce4-ff74e7f30939" class="material-tab-panel tab-288545f0-eaf6-454b-8ce4-ff74e7f30939" role="tabpanel" aria-labelledby="tabs-detail-288545f0-eaf6-454b-8ce4-ff74e7f30939" style="">
+            <p class="occupancy-text">This number is only as accurate as our swipe data. Please make
+ sure that you are swiping in and out <br>when visiting the Esports Center.</p>
+        </div>
+    </div>
+</div>
+
+<script nonce="">
+    $(document).ready(function () {
+        $('#288545f0-eaf6-454b-8ce4-ff74e7f30939-tabs button').click(function (e) {
+
+		    e.preventDefault();
+		    $('#288545f0-eaf6-454b-8ce4-ff74e7f30939-tabs button').removeClass('active').attr('aria-selected', 'false');
+            $(this).addClass('active').attr('aria-selected', 'true');
+            let tabId = $(this).data('tab');
+
+            $('.tab-288545f0-eaf6-454b-8ce4-ff74e7f30939').hide();
+            $('#' + tabId).show();
+        });
+});
+</script>
+</div>
+		<div class="col" id="facility-da838218-ae53-4c6f-b744-2213299033fc" data-facilityid="da838218-ae53-4c6f-b744-2213299033fc">
+<div class="occupancy-card">
+    <div class="occupancy-card-header">
+		<div class="occupancy-card-header-line-1">
+			<div style="margin-top: 4px;">
+				<h2><strong>Bouldering Wall</strong></h2>
+			</div>
+		</div>
+
+        <div id="da838218-ae53-4c6f-b744-2213299033fc-tabs" class="material-tabs" role="tablist">
+            <button type="button" id="tabs-occupancy-da838218-ae53-4c6f-b744-2213299033fc" data-tab="occupancy-da838218-ae53-4c6f-b744-2213299033fc" class="active" role="tab" aria-selected="true" aria-controls="occupancy-da838218-ae53-4c6f-b744-2213299033fc" aria-label="Bouldering Wall Occupancy">
+                <span class="text-primary">Occupancy</span>
+            </button>
+            <button type="button" id="tabs-detail-da838218-ae53-4c6f-b744-2213299033fc" data-tab="details-da838218-ae53-4c6f-b744-2213299033fc" role="tab" aria-selected="false" aria-controls="details-da838218-ae53-4c6f-b744-2213299033fc" aria-label="Bouldering Wall Facility Details">
+                <span class="text-primary">Details</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="occupancy-card-body">
+        <div id="occupancy-da838218-ae53-4c6f-b744-2213299033fc" class="material-tab-panel tab-da838218-ae53-4c6f-b744-2213299033fc" role="tabpanel" aria-labelledby="tabs-occupancy-da838218-ae53-4c6f-b744-2213299033fc">
+            <div class="d-none d-md-flex justify-content-center">
+                <div class="occupancy-chart-container" style="position: relative; height:160px; width:160px;">
+                    <canvas id="occupancyChart-da838218-ae53-4c6f-b744-2213299033fc" class="occupancy-chart" data-ratio="0" data-occupancy="0" data-remaining="8" width="160" height="160" aria-labelledby="chartDesc-da838218-ae53-4c6f-b744-2213299033fc" role="img" style="display: block; box-sizing: border-box; height: 160px; width: 160px;"></canvas>
+                </div>
+                    <span id="chartDesc-da838218-ae53-4c6f-b744-2213299033fc" class="visually-hidden">
+                        Max Occupancy: 8, Current Occupancy: 0%
+                    </span>
+            </div>
+            <div class="d-md-none d-flex flex-column">
+                <div class="occupany-chart-wrapper-sm">
+                    <div class="occupancy-chart-container">
+                        <canvas id="occupancyChart-da838218-ae53-4c6f-b744-2213299033fc-sm" class="occupancy-chart" data-ratio="0" data-occupancy="0" data-remaining="8" width="0" height="0" aria-labelledby="chartDesc-da838218-ae53-4c6f-b744-2213299033fc-sm" role="img" style="display: block; box-sizing: border-box; height: 0px; width: 0px;"></canvas>
+                    </div>
+                </div>
+                    <span id="chartDesc-da838218-ae53-4c6f-b744-2213299033fc-sm" class="visually-hidden">
+                        Max Occupancy: 8, Current Occupancy: 0%
+                    </span>
+            </div>
+        </div>
+
+        <div id="details-da838218-ae53-4c6f-b744-2213299033fc" class="material-tab-panel tab-da838218-ae53-4c6f-b744-2213299033fc" role="tabpanel" aria-labelledby="tabs-detail-da838218-ae53-4c6f-b744-2213299033fc" style="display:none">
+            <p class="occupancy-text">This number is only as accurate as our swipe data. Please make
+ sure that you are swiping in and out <br>when visiting the Bouldering Wall.</p>
+        </div>
+    </div>
+</div>
+
+<script nonce="">
+    $(document).ready(function () {
+        $('#da838218-ae53-4c6f-b744-2213299033fc-tabs button').click(function (e) {
+
+		    e.preventDefault();
+		    $('#da838218-ae53-4c6f-b744-2213299033fc-tabs button').removeClass('active').attr('aria-selected', 'false');
+            $(this).addClass('active').attr('aria-selected', 'true');
+            let tabId = $(this).data('tab');
+
+            $('.tab-da838218-ae53-4c6f-b744-2213299033fc').hide();
+            $('#' + tabId).show();
+        });
+});
+</script>
+</div>
+</div>
+
+<div class="occupancy-edit-container" style="min-height: 500px;">
+	
+</div>
+
+
+
+                        <br>
+                    </div>
+
+
+                </div>
+
+                
+
+                <button type="button" class="cd-top btn btn-primary" aria-label="Scroll to Top">
+                    <div class="d-flex align-items-center"><span class="material-icons-round" aria-hidden="true">keyboard_arrow_up</span></div>
+                </button>
+
+                <div id="mJavascriptError" class="modal fade" tabindex="-1" aria-hidden="true" aria-labelledby="JavascriptErrorTitle">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2 class="modal-title global-Modal-Header-H5-FontSize" id="JavascriptErrorTitle">Error</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p id="JavascriptErrorDescription"></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" value="Do you want to leave this site? Changes you made may not be saved." id="hdn-navigate-away-message">
+
+                <div id="loading" aria-label="Loading">
+                    <div id="loadingcontent" style="">
+                        <p id="loadingspinner" aria-live="polite">
+                            Loading ...
+                        </p>
+                    </div>
+                </div>
+
+                <div id="toastNote"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast position-fixed" id="accountCreationToastId" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false" aria-labelledby="accountCreationToastId-title">
+        <div class="toast-body">
+            <div class="mb-1">
+                <strong id="accountCreationToastId-title" class="me-auto">Account created!</strong>
+            </div>
+            <div class="mt-2">
+                A confirmation email will be sent to you shortly.
+            </div>
+            <div class="text-end mt-3">
+                <a href="#" class="text-body me-4" data-bs-dismiss="toast">DISMISS</a>
+                <a id="aLayoutRedirectToProfile" href="#" class="text-body" data-bs-dismiss="toast"><strong>COMPLETE PROFILE</strong></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast position-fixed" id="recoveredOrderToastId" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" aria-labelledby="recoveredOrderToastId-title">
+        <div class="toast-body">
+            <div class="mb-1">
+                <strong id="recoveredOrderToastId-title" class="me-auto">Order Recovered</strong>
+            </div>
+            <div class="mt-2">
+                Your previous checkout was not completed and has been recovered.
+            </div>
+            <div class="text-end mt-3">
+                <a href="#" id="recoveredOrderDismiss" class="text-body me-4" data-bs-dismiss="toast" aria-label="Close"><strong>DISMISS</strong></a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="overlay"></div>
+    <div class="overlay-secondary"></div>
+
+<div id="ecContentFooter" data-id="00000000-0000-0000-0000-000000004193" class="editableCustomContent">
+	<div class="ecContentFooter">
+<div class="container">
+<div class="row">
+<div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+<h4>Join the fastest growing Recreation Portal Software!</h4>
+</div>
+<div class="col-lg-3 col-md-3 col-sm-4 col-xs-12"><button class="btn btn-invert">EXPLORE FUSION</button></div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<footer class="container-fluid FooterBar FooterBarBg">
+		<div id="ecFooter" class="editableCustomContent" data-id="00000000-0000-0000-0000-000000004188">
+			<div class="SchoolFooter row">
+<div class="vt-footer-container container">
+<div class="row dsa_footer_links ">
+<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 dsa_footer_links_col"><a id="giving_to_dsa" href="https://apps.es.vt.edu/onlinegiving/gift?fund=871154" target="_blank" title="Giving to DSA" rel="noopener noreferrer">Giving to DSA</a></div>
+<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 dsa_footer_links_col"><a id="student_advocacy" href="https://students.vt.edu/support_advocacy.html" title="Student Advocacy and Support" target="_blank" rel="noopener noreferrer">Student Advocacy and Support</a></div>
+<div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 dsa_footer_links_col"><a id="report_harassment" href="https://dos.vt.edu/express_a_concern.html" target="_blank" rel="noopener noreferrer">Seek Advice or Express a Concern</a></div>
+</div>
+<div class="row">
+<div class="col-lg-3 col-md-12"><a href="https://students.vt.edu/" title="Division of Student Affairs">Division of Student Affairs</a>
+<ul class="col-lg-12 col-md-4 col-sm-2 vt-copyright-contact-container">
+<li><a href="/Home/Contact" target="_blank" rel="noopener noreferrer">Contact Us</a></li>
+<li><a href="https://vt.edu/privacy.html" target="_blank" rel="noopener noreferrer">Privacy</a></li>
+<li><a href="https://vt.edu/acceptable-use.html" target="_blank" rel="noopener noreferrer">Acceptable Use</a></li>
+<li></li>
+<li><b><u>Refund Policy:<br></u></b><span>All sales are final. Partial refunds will only be issued (subject to an administrative fee) if medical documentation is provided by a physician stating the participant can no longer continue in physical activity.</span></li>
+<li></li>
+<li></li>
+</ul>
+<p></p>
+<a href="https://www.facebook.com/StudentsAtVT/" target="_blank" title="Like Us on Facebook" rel="noopener noreferrer"> <i class="fa fa-facebook fa-2x"></i> </a> <a href="https://twitter.com/StudentsAtVT" target="_blank" title="Follow Us on Twitter" rel="noopener noreferrer"> <i class="fa fa-twitter fa-2x">&nbsp;</i> </a> <a href="https://www.youtube.com/channel/UCBSMoAW2x14Fyt3oZJ1iEbw" target="_blank" title="Subscribe to our YouTube channel" rel="noopener noreferrer"> <i class="fa fa-youtube fa-2x">&nbsp;</i> </a> <a href="https://www.instagram.com/VTDSA/" target="_blank" title="Follow Us on Instagram" rel="noopener noreferrer"> <i class="fa fa-instagram fa-2x">&nbsp;</i> </a></div>
+<div class="col-lg-9 col-md-12">
+<div>
+<div class="iparys_inherited">
+<div class="footer-briefs parsys iparsys">
+<div class="parbase vtmulticolumn section">
+<div class="vt-multicolumn">
+<div class="container-fluid">
+<div class="row">
+<div class="col-md-3 col-sm-6">
+<div class="vt-col vt-col-1">
+<div class="parbase section text">
+<ul>
+<li><a href="https://vtnews.vt.edu/" target="_blank" rel="noopener noreferrer">News</a></li>
+<li><a href="https://www.calendar.vt.edu/main.php" target="_blank" rel="noopener noreferrer">Calendar</a></li>
+<li><a href="https://give.vt.edu/" target="_blank" rel="noopener noreferrer">Giving</a></li>
+<li><a href="https://lib.vt.edu/" target="_blank" rel="noopener noreferrer">Libraries</a></li>
+<li><a href="https://vt.edu/maps.html" target="_blank" rel="noopener noreferrer">Maps &amp; Locations</a></li>
+<li><a href="https://vt.edu/az_index.html" target="_blank" rel="noopener noreferrer">A to Z Index</a></li>
+<li><a href="http://search.vt.edu/search/m/people.html" target="_blank" rel="noopener noreferrer">Directory</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-md-3 col-sm-6">
+<div class="vt-col vt-col-2">
+<div class="parbase section text">
+<ul>
+<li><a href="https://vt.edu/admissions/undergraduate/visit.html" target="_blank" rel="noopener noreferrer">Prospective Students</a></li>
+<li><a href="https://vt.edu/resources/current-students.html" target="_blank" rel="noopener noreferrer">Current Students</a></li>
+<li><a href="http://www.graduateschool.vt.edu" target="_blank" rel="noopener noreferrer">Graduate Students</a></li>
+<li><a href="facultyandstaff/" target="_blank" rel="noopener noreferrer">Faculty &amp; Staff</a></li>
+<li><a href="http://www.nsfp.vt.edu/parents_families/" target="_blank" rel="noopener noreferrer">Parents &amp; Family</a></li>
+<li><a href="http://www.vt.edu/business/index.html" target="_blank" rel="noopener noreferrer">Business &amp; Industry</a></li>
+<li><a href="http://www.alumni.dsa.vt.edu/" target="_blank" rel="noopener noreferrer">Alumni</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-md-3 col-sm-6">
+<div class="vt-col vt-col-3">
+<div class="parbase section text">
+<ul>
+<li><a href="http://www.bookstore.vt.edu" target="_blank" rel="noopener noreferrer">Bookstore</a></li>
+<li><a href="http://www.vt.edu/about/equal-opportunity.html" target="_blank" rel="noopener noreferrer">Equal Opportunity</a></li>
+<li><a href="http://www.vt.edu/about/accessibility.html" target="_blank" rel="noopener noreferrer">Accessibility</a></li>
+<li><a href="http://www.unirel.vt.edu/web/web-guidelines/guidelines-index.html" target="_blank" rel="noopener noreferrer">VT Web Guidelines</a></li>
+<li><a href="http://www.weremember.vt.edu/index.html" target="_blank" rel="noopener noreferrer">We Remember</a></li>
+<li><a href="http://www.inclusive.vt.edu" target="_blank" rel="noopener noreferrer">InclusiveVT</a></li>
+<li><a href="http://www.stopabuse.vt.edu" target="_blank" rel="noopener noreferrer">Stop Abuse</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-md-3 col-sm-6">
+<div class="vt-col vt-col-4">
+<div class="parbase section text">
+<ul>
+<li><a href="https://banweb.banner.vt.edu/ssb/prod/twbkwbis.P_WWWLogin" target="_blank" rel="noopener noreferrer">Hokie SPA</a></li>
+<li><a href="https://scholar.vt.edu/portal" target="_blank" rel="noopener noreferrer">Scholar</a></li>
+<li><a href="http://my.vt.edu" target="_blank" rel="noopener noreferrer">MyVT</a></li>
+<li><a href="http://www.jobs.vt.edu" target="_blank" rel="noopener noreferrer">Jobs at VT</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row">
+<div id="vt_copyright" class="col-lg-12">
+<p>© 2025 Virginia Polytechnic Institute and State University</p>
+</div>
+</div>
+</div>
+</div>
+<div class="FusionFooter row">
+<div class="container">
+<div class="row">
+<div class="col-lg-8 col-md-8 col-sm-6 col-xs-12">
+<div class="FooterLinkGroup">
+<div class="copyright copyrightTextColor">© <span class="ecDateTime_Year">2026</span> Innosoft Canada. All rights reserved.</div>
+<a class="FooterLink FooterLinkColor" href="/Home/Contact">Contact Us</a> <a class="FooterLink FooterLinkColor" href="/Home/About">About Us</a> <a class="FooterLink FooterLinkColor" href="/Home/Terms">Terms Of Use</a></div>
+</div>
+<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+<div class="FooterLogo"><a title="Powered By Fusion" href="http://www.innosoftfusion.com"> <img src="/Content/Images/Fusion-Icon-Light.png" alt="Powered By Fusion"> </a></div>
+</div>
+</div>
+</div>
+</div>
+		</div>	
+</footer>
+
+
+    
+
+    <script type="text/javascript" nonce="">
+		document.getElementById("aLayoutRedirectToProfile").addEventListener("click", function () { redirectToProfile() });
+        document.getElementById("recoveredOrderDismiss").addEventListener("click", function () { dismissRecoveredOrder() });
+
+	var jsErrorMessages_Refresh = 'Error while loading data! Refresh page and try again!';
+	var jsErrorMessages_JSError = 'Error occured while loading data!';
+	var jsErrorMessages_Error = 'Error';
+	var InnosoftUrls = {
+		PriceAPI: '/api/Price/GetPrices',
+		ProductAPI: '/api/product'
+	};
+	var InnosoftConstants = {
+		GuidEmpty: '00000000-0000-0000-0000-000000000000'
+	};
+    </script>
+
+    <div id="section-tinymcescripts"></div>
+
+    <script type="text/javascript" src="/bundles/innosoftPostScript?v=OLJ9FMtJ-POdNjq17KB9lEmzvM10OfevmiYTG0uL0VQ1" nonce=""></script>
+
+    
+
+    <div id="nvda-announcer" aria-live="polite" aria-atomic="true" class="visually-hidden"></div>
+
+
+
+
+</body></html>
