@@ -1,0 +1,38 @@
+{
+  "scraped_at": "2026-09-19T21:44:08",
+  "source": "https://connect.recsports.vt.edu/facilityoccupancy",
+  "facilities": [
+    {
+      "name": "WMH Service Desk",
+      "current": 1200
+    },
+    {
+      "name": "Max Occupancy: 1200, Current Occupancy: 55%",
+      "current": 1200
+    },
+    {
+      "name": "McComas Hall",
+      "current": 600
+    },
+    {
+      "name": "Max Occupancy: 600, Current Occupancy: 0%",
+      "current": 600
+    },
+    {
+      "name": "Esports",
+      "current": 55
+    },
+    {
+      "name": "Max Occupancy: 55, Current Occupancy: 11%",
+      "current": 55
+    },
+    {
+      "name": "Bouldering Wall",
+      "current": 8
+    },
+    {
+      "name": "Max Occupancy: 8, Current Occupancy: 0%",
+      "current": 8
+    }
+  ]
+}

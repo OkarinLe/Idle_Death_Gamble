@@ -41,7 +41,7 @@ Notes
 import json
 import re
 import time
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import Optional
 
 from playwright.sync_api import sync_playwright
@@ -49,6 +49,7 @@ from playwright.sync_api import sync_playwright
 URL = "https://connect.recsports.vt.edu/facilityoccupancy"
 HEADLESS = True          # set False the first time to watch it work / debug
 WAIT_AFTER_LOAD_MS = 4000  # give charts time to fetch + render
+OUTPUT_PATH = "facility_occupancy.json"
 
 # Keywords that suggest a network response is occupancy-related JSON
 CANDIDATE_KEYWORDS = ("occup", "capacity", "facility", "count", "attend")
@@ -74,6 +75,7 @@ def looks_like_occupancy_json(url: str, body_text: str) -> bool:
 def scrape_via_network_capture() -> list[dict]:
     """Capture JSON API responses the page makes while loading."""
     captured = []
+    seen_signatures = set()
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=HEADLESS)
@@ -88,6 +90,13 @@ def scrape_via_network_capture() -> list[dict]:
                 url = response.url
                 body_text = response.text()
                 if looks_like_occupancy_json(url, body_text):
+                    # The page may poll the same endpoint more than once
+                    # before we finish capturing (or hit it once per widget
+                    # with an identical payload) -- skip exact duplicates.
+                    signature = (url, body_text)
+                    if signature in seen_signatures:
+                        return
+                    seen_signatures.add(signature)
                     try:
                         data = response.json()
                     except Exception:
@@ -157,32 +166,56 @@ def scrape_via_dom_fallback() -> list[FacilityReading]:
 
         browser.close()
 
-    return readings
+    # De-duplicate: broad selectors like "[class*='card']" often match both
+    # a container div and elements nested inside it, so the same facility
+    # can get picked up multiple times. Keep the first occurrence of each
+    # unique facility name.
+    seen = set()
+    deduped: list[FacilityReading] = []
+    for r in readings:
+        if r.name in seen:
+            continue
+        seen.add(r.name)
+        deduped.append(r)
+
+    return deduped
+
+
+def write_json(payload: dict) -> None:
+    with open(OUTPUT_PATH, "w") as f:
+        json.dump(payload, f, indent=2)
+    print(f"\nWrote results to {OUTPUT_PATH}")
 
 
 def main():
     print(f"Loading {URL} ...")
     api_hits = scrape_via_network_capture()
+    timestamp = time.strftime("%Y-%m-%dT%H:%M:%S")
 
     if api_hits:
-        print(f"\nFound {len(api_hits)} JSON response(s) that look occupancy-related:\n")
-        for hit in api_hits:
-            print(f"--- {hit['url']} ---")
-            print(json.dumps(hit["data"], indent=2)[:2000])
-            print()
+        print(f"\nFound {len(api_hits)} JSON response(s) that look occupancy-related.")
         print(
-            "Inspect the JSON structure above, then write a small parser "
-            "for the exact fields (facility name, current raw count). "
-            "If a field looks like a percentage instead of a raw count, "
-            "multiply it by that facility's capacity to get the raw count: "
-            "raw_count = round(percent_value * capacity)"
+            "Raw API responses saved to the JSON file below under 'raw_api_hits'. "
+            "Inspect them, then adjust this script to pull the exact raw-count "
+            "field into 'facilities' instead of leaving it empty."
         )
+        write_json({
+            "scraped_at": timestamp,
+            "source": URL,
+            "facilities": [],  # fill in once you identify the exact raw-count field
+            "raw_api_hits": api_hits,
+        })
         return
 
     print("No obvious occupancy JSON API found via network capture.")
     print("Falling back to DOM scraping (best-effort)...\n")
 
     readings = scrape_via_dom_fallback()
+    facilities = [
+        {"name": r.name, "current": r.current}
+        for r in readings
+    ]
+
     if not readings:
         print(
             "Could not extract data automatically. Run with HEADLESS=False, "
@@ -190,11 +223,12 @@ def main():
             "for an XHR/fetch request returning JSON occupancy data. Update "
             "CANDIDATE_KEYWORDS or hit that endpoint directly with `requests`."
         )
-        return
 
-    for r in readings:
-        value = int(r.current) if r.current is not None else "N/A"
-        print(f"{r.name}: {value}")
+    write_json({
+        "scraped_at": timestamp,
+        "source": URL,
+        "facilities": facilities,
+    })
 
 
 if __name__ == "__main__":
