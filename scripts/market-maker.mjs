@@ -1,6 +1,7 @@
 // Market Maker Agent.
 // Looks at LIVE readings only (the newest number per place, no older than 30 minutes),
 // asks the AI for 1 to 3 Yes/No market ideas, CHECKS every idea, and inserts the good ones.
+// Before trusting any data it checks the Data Agent identity with ANS and pays it (see section 0).
 // It also adds a "Will Virginia Tech win?" market for upcoming football games (made by
 // plain code from the schedule, no AI needed).
 //
@@ -14,6 +15,8 @@
 //  - Resolution and payouts are never AI: resolve_market in the database does that.
 import { createClient } from "@supabase/supabase-js";
 import { askAI, parseAIJson } from "../src/lib/ai.ts";
+import { verifyAgent } from "../src/lib/ans.ts";
+import { agentNames, ansConfig, getResolver } from "../src/lib/ans-resolvers.ts";
 
 // Name saved in markets.created_by. Task 4 replaces this with the agent's ANS name.
 const AGENT_NAME = "market-maker-agent";
@@ -43,6 +46,34 @@ const clock = (d) =>
 const dayAndClock = (d) =>
   d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "America/New_York" }) +
   ` at ${clock(d)}`;
+
+// ---------- 0. Trust gate: is the Data Agent really who it says it is? ----------
+// ANS (Agent Name Service) check. If it fails we trust nothing and create no markets.
+// If it passes, the Market Maker pays the Data Agent 1 Hokie Buck for its data (agent-to-agent payment).
+async function trustDataAgent() {
+  const { domain, mode } = ansConfig();
+  const names = agentNames(domain);
+  const verification = await verifyAgent(names.dataAgent, getResolver());
+  for (const c of verification.checks) console.log(`ANS ${c.ok ? "PASSED" : "FAILED"} - ${c.name}: ${c.detail}`);
+  if (!verification.verified) {
+    console.log(`Data Agent ${names.dataAgent} failed its identity check. Not trusting its data, no markets created.`);
+    return false;
+  }
+  console.log(`Data Agent verified (${mode === "demo" ? "simulated registry" : "live ANS"}).`);
+
+  if (!DRY_RUN) {
+    // A payment problem (for example supabase/agents.sql not run yet) is a warning, not a stop.
+    await supabase.from("agent_accounts").upsert(
+      [{ ans_name: names.marketMaker, balance: 500 }, { ans_name: names.dataAgent, balance: 100 }],
+      { onConflict: "ans_name", ignoreDuplicates: true }
+    );
+    const { error } = await supabase.rpc("agent_pay", {
+      p_from: names.marketMaker, p_to: names.dataAgent, p_amount: 1, p_memo: "Data delivery for market-maker run",
+    });
+    console.log(error ? `Payment skipped: ${error.message} (run supabase/agents.sql?)` : "Paid the Data Agent 1 Hokie Buck.");
+  }
+  return true;
+}
 
 // ---------- 1. Gather what the AI needs to know (live data only) ----------
 async function loadContext() {
@@ -217,6 +248,7 @@ async function save(rows) {
 }
 
 async function run() {
+  if (!(await trustDataAgent())) return; // stop right here if the identity check fails
   const ctx = await loadContext();
   const placeById = Object.fromEntries(ctx.places.map((p) => [p.id, p]));
 
